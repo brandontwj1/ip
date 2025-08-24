@@ -1,4 +1,7 @@
+import org.w3c.dom.html.HTMLObjectElement;
+
 import java.util.Scanner;
+import java.util.regex.*;
 
 public class Omni {
     private static final String HORIZONTAL_LINE = "   _________________________________________________________\n";
@@ -53,9 +56,43 @@ public class Omni {
         System.out.print(HORIZONTAL_LINE + INDENT + "Here are the tasks you've added:\n");
         for (int i = 0; i < taskCount; i++) {
             Task t = tasks[i];
-            System.out.printf(INDENT + "%d.[%s] %s\n", i+1, t.isDone() ? "X" : " ", t);
+            System.out.printf(INDENT + "%d.[%s] %s\n", i+1, t.getStatusIcon(), t);
         }
         System.out.print(HORIZONTAL_LINE);
+    }
+
+    private static void handleMark(String input) {
+        System.out.print(HORIZONTAL_LINE);
+        Pattern pattern = Pattern.compile("mark (\\d{1,3})");
+        Matcher matcher = pattern.matcher(input);
+
+        if (matcher.matches()) {
+            Omni.markTask(matcher.group(1));
+        } else {
+            System.out.println(INDENT + "Something went wrong. Try again!");
+        }
+
+        System.out.print(HORIZONTAL_LINE);
+    }
+
+    private static void markTask(String n) {
+        int num;
+        try {
+            num = Integer.parseInt(n);
+        } catch (NumberFormatException e) {
+            System.out.println(INDENT + "Invalid mark command. Try again");
+            return;
+        }
+
+        if (num > taskCount) {
+            System.out.println(INDENT + "That task does not exist! Try again!");
+        } else {
+            tasks[num-1].markDone();
+            System.out.println(
+                INDENT + "Congrats! I've marked this task as done:\n" +
+                INDENT + "  [X] " + tasks[num]
+            );
+        }
     }
 
     public static void main(String[] args) {
@@ -63,12 +100,12 @@ public class Omni {
         Scanner sc = new Scanner(System.in);
         String input = sc.nextLine();
         while (!input.equals("bye")) {
-            switch (input) {
-            case "list":
+            if (input.matches("list")) {
                 Omni.listTasks();
-                break;
-            default:
-                addTask(input);
+            } else if (input.matches("mark \\d{1,3}")) {
+                Omni.handleMark(input);
+            } else {
+                Omni.addTask(input);
             }
             input = sc.nextLine();
         }
