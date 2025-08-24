@@ -52,7 +52,7 @@ public class Omni {
         );
     }
 
-    private static void listTasks() {
+    private static void handleList() {
         System.out.print(HORIZONTAL_LINE + INDENT + "Here are the tasks you've added:\n");
         for (int i = 0; i < taskCount; i++) {
             Task t = tasks[i];
@@ -61,21 +61,9 @@ public class Omni {
         System.out.print(HORIZONTAL_LINE);
     }
 
-    private static void handleMark(String input) {
-        System.out.print(HORIZONTAL_LINE);
-        Pattern pattern = Pattern.compile("mark (\\d{1,3})");
-        Matcher matcher = pattern.matcher(input);
 
-        if (matcher.matches()) {
-            Omni.markTask(matcher.group(1));
-        } else {
-            System.out.println(INDENT + "Something went wrong. Try again!");
-        }
-
-        System.out.print(HORIZONTAL_LINE);
-    }
-
-    private static void markTask(String n) {
+    private static void handleMark(String n) {
+        System.out.println(HORIZONTAL_LINE);
         int num;
         try {
             num = Integer.parseInt(n);
@@ -93,23 +81,12 @@ public class Omni {
                 INDENT + tasks[num-1]
             );
         }
+        System.out.println(HORIZONTAL_LINE);
     }
 
-    private static void handleUnmark(String input) {
-        System.out.print(HORIZONTAL_LINE);
-        Pattern pattern = Pattern.compile("unmark (\\d{1,3})");
-        Matcher matcher = pattern.matcher(input);
 
-        if (matcher.matches()) {
-            Omni.unmarkTask(matcher.group(1));
-        } else {
-            System.out.println(INDENT + "Something went wrong. Try again!");
-        }
-
-        System.out.print(HORIZONTAL_LINE);
-    }
-
-    private static void unmarkTask(String n) {
+    private static void handleUnmark(String n) {
+        System.out.println(HORIZONTAL_LINE);
         int num;
         try {
             num = Integer.parseInt(n);
@@ -127,23 +104,43 @@ public class Omni {
                 INDENT + tasks[num-1]
             );
         }
+        System.out.println(HORIZONTAL_LINE);
+    }
+
+    private static void handleUnknownCmd() {
+        System.out.println(
+            HORIZONTAL_LINE +
+            INDENT + "I can't lie I have no idea what that means...\n" +
+            HORIZONTAL_LINE
+        );
     }
 
     public static void main(String[] args) {
         Omni.greet();
         Scanner sc = new Scanner(System.in);
-        String input = sc.nextLine();
-        while (!input.equals("bye")) {
-            if (input.matches("list")) {
-                Omni.listTasks();
-            } else if (input.matches("mark \\d{1,3}")) {
-                Omni.handleMark(input);
-            } else if (input.matches("unmark \\d{1,3}")) {
-                Omni.handleUnmark(input);
-            }   else {
+        String input = sc.nextLine().trim();
+        String[] parts = input.split("\\s+", 2);
+        String cmd = parts[0];
+        String arg = parts.length > 1 ? parts[1] : "";
+        while (!cmd.equals("bye")) {
+            switch (cmd.toLowerCase()) {
+            case "list":
+                Omni.handleList();
+                break;
+            case "mark":
+                Omni.handleMark(arg);
+                break;
+            case "unmark":
+                Omni.handleUnmark(arg);
+                break;
+            default:
+                //Omni.handleUnknownCmd();
                 Omni.addTask(input);
             }
-            input = sc.nextLine();
+            input = sc.nextLine().trim();
+            parts = input.split("\\s+", 2);
+            cmd = parts[0];
+            arg = parts.length > 1 ? parts[1] : "";
         }
         Omni.exit();
     }
