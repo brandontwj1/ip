@@ -80,7 +80,7 @@ public class Omni {
         try {
             num = Integer.parseInt(n);
         } catch (NumberFormatException e) {
-            System.out.println(INDENT + "Invalid mark command. Try again");
+            System.out.println(INDENT + "Invalid mark command. Try again.");
             return;
         }
 
@@ -90,7 +90,41 @@ public class Omni {
             tasks[num-1].markDone();
             System.out.println(
                 INDENT + "Congrats! I've marked this task as done:\n" +
-                INDENT + "  [X] " + tasks[num]
+                INDENT + "  [X] " + tasks[num-1]
+            );
+        }
+    }
+
+    private static void handleUnmark(String input) {
+        System.out.print(HORIZONTAL_LINE);
+        Pattern pattern = Pattern.compile("unmark (\\d{1,3})");
+        Matcher matcher = pattern.matcher(input);
+
+        if (matcher.matches()) {
+            Omni.unmarkTask(matcher.group(1));
+        } else {
+            System.out.println(INDENT + "Something went wrong. Try again!");
+        }
+
+        System.out.print(HORIZONTAL_LINE);
+    }
+
+    private static void unmarkTask(String n) {
+        int num;
+        try {
+            num = Integer.parseInt(n);
+        } catch (NumberFormatException e) {
+            System.out.println(INDENT + "Invalid unmark command. Try again.");
+            return;
+        }
+
+        if (num > taskCount) {
+            System.out.println(INDENT + "That task does not exist! Try again!");
+        } else {
+            tasks[num-1].unmarkDone();
+            System.out.println(
+                INDENT + "Sure thing, I've marked this task as not done yet:\n" +
+                INDENT + "  [ ] " + tasks[num-1]
             );
         }
     }
@@ -104,7 +138,9 @@ public class Omni {
                 Omni.listTasks();
             } else if (input.matches("mark \\d{1,3}")) {
                 Omni.handleMark(input);
-            } else {
+            } else if (input.matches("unmark \\d{1,3}")) {
+                Omni.handleUnmark(input);
+            }   else {
                 Omni.addTask(input);
             }
             input = sc.nextLine();
