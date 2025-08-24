@@ -11,8 +11,12 @@ public class Task {
         this.done = true;
     }
 
-    public void markUndone() {
+    public void unmarkDone() {
         this.done = false;
+    }
+
+    public boolean isDone() {
+        return this.done;
     }
 
     @Override

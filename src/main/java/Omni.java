@@ -3,7 +3,7 @@ import java.util.Scanner;
 public class Omni {
     private static final String HORIZONTAL_LINE = "   _________________________________________________________\n";
     private static final String INDENT = "    ";
-    private static String[] tasks = new String[100];
+    private static Task[] tasks = new Task[100];
     private static int taskCount = 0;
 
     private static void greet() {
@@ -32,7 +32,7 @@ public class Omni {
     }
 
     private static void addTask(String input) {
-        tasks[taskCount] = input;
+        tasks[taskCount] = new Task(input);
         taskCount++;
         System.out.println(
             HORIZONTAL_LINE +
@@ -42,9 +42,10 @@ public class Omni {
     }
 
     private static void listTasks() {
-        System.out.print(HORIZONTAL_LINE);
+        System.out.print(HORIZONTAL_LINE + INDENT + "Here are the tasks you've added:\n");
         for (int i = 0; i < taskCount; i++) {
-            System.out.printf(INDENT + "%d. %s\n", i, tasks[i]);
+            Task t = tasks[i];
+            System.out.printf(INDENT + "%d.[%s] %s\n", i+1, t.isDone() ? "X" : " ", t);
         }
         System.out.print(HORIZONTAL_LINE);
     }
