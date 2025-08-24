@@ -56,7 +56,7 @@ public class Omni {
         System.out.print(HORIZONTAL_LINE + INDENT + "Here are the tasks you've added:\n");
         for (int i = 0; i < taskCount; i++) {
             Task t = tasks[i];
-            System.out.printf(INDENT + "%d.[%s] %s\n", i+1, t.getStatusIcon(), t);
+            System.out.printf(INDENT + "%d.%s\n", i+1, t);
         }
         System.out.print(HORIZONTAL_LINE);
     }
@@ -90,7 +90,7 @@ public class Omni {
             tasks[num-1].markDone();
             System.out.println(
                 INDENT + "Congrats! I've marked this task as done:\n" +
-                INDENT + "  [X] " + tasks[num-1]
+                INDENT + tasks[num-1]
             );
         }
     }
@@ -124,7 +124,7 @@ public class Omni {
             tasks[num-1].unmarkDone();
             System.out.println(
                 INDENT + "Sure thing, I've marked this task as not done yet:\n" +
-                INDENT + "  [ ] " + tasks[num-1]
+                INDENT + tasks[num-1]
             );
         }
     }
