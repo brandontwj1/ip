@@ -31,6 +31,14 @@ public class Omni {
         );
     }
 
+    private static void printErrorMessage() {
+        System.out.println(
+            HORIZONTAL_LINE +
+            INDENT + "My bad something went wrong. Try again!\n" +
+            HORIZONTAL_LINE
+        );
+    }
+
     private static void addTask(String input) {
         tasks[taskCount] = new Task(input);
         taskCount++;
