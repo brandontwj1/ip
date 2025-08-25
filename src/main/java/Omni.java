@@ -55,7 +55,7 @@ public class Omni {
     private static void handleList() {
         System.out.print(HORIZONTAL_LINE);
         if (taskCount == 0) {
-            System.out.println(INDENT + "You have no tasks.. Add one!");
+            System.out.println(INDENT + "You have no tasks... Add one!");
             System.out.print(HORIZONTAL_LINE);
             return;
         }
@@ -165,16 +165,16 @@ public class Omni {
             String description = parts[0].trim();
             String[] dates = parts[1].trim().split("/to", 2);
             if (dates.length < 2) {
-                System.out.println(INDENT + "Unable to set Event, remember to use /from and /to in that order!");
+                System.out.println(INDENT + "Unable to set event, remember to use /from and /to in that order!");
             } else {
                 Event newEvent = new Event(description, dates[0].trim(), dates[1].trim());
                 tasks[taskCount] = newEvent;
                 taskCount++;
                 String taskStr = taskCount == 1 ? "task" : "tasks";
                 System.out.println(
-                        INDENT + "Got it. I've added this task:\n" +
-                                INDENT + "  " + newEvent + "\n" +
-                                INDENT + "Now you have " + taskCount + " " + taskStr + " in the list."
+                    INDENT + "Got it. I've added this task:\n" +
+                    INDENT + "  " + newEvent + "\n" +
+                    INDENT + "Now you have " + taskCount + " " + taskStr + " in the list."
                 );
             }
         }
