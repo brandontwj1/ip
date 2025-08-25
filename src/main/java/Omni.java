@@ -1,13 +1,13 @@
 import exceptions.*;
 
+import java.util.ArrayList;
 import java.util.Scanner;
 import java.util.regex.*;
 
 public class Omni {
     private static final String HORIZONTAL_LINE = "   _________________________________________________________\n";
     private static final String INDENT = "    ";
-    private static Task[] tasks = new Task[100];
-    private static int taskCount = 0;
+    private static ArrayList<Task> tasks = new ArrayList<>();
 
     private static void greet() {
         System.out.println(
@@ -46,8 +46,7 @@ public class Omni {
     }
 
     private static void addTask(String input) {
-        tasks[taskCount] = new Task(input);
-        taskCount++;
+        tasks.add(new Task(input));
         System.out.println(
             HORIZONTAL_LINE +
             INDENT + "Added: " + input + "\n" +
@@ -56,13 +55,13 @@ public class Omni {
     }
 
     private static void handleList() {
-        if (taskCount == 0) {
+        if (tasks.isEmpty()) {
             System.out.println(INDENT + "You have no tasks... Add one!");
             return;
         }
         System.out.print(INDENT + "Here are the tasks you've added:\n");
-        for (int i = 0; i < taskCount; i++) {
-            Task t = tasks[i];
+        for (int i = 0; i < tasks.size(); i++) {
+            Task t = tasks.get(i);
             System.out.printf(INDENT + "%d.%s\n", i+1, t);
         }
     }
@@ -77,13 +76,13 @@ public class Omni {
             return;
         }
 
-        if (num > taskCount) {
+        if (num > tasks.size()) {
             throw new InvalidArgumentException("That task does not exist! Try again!");
         } else {
-            tasks[num-1].markDone();
+            tasks.get(num-1).markDone();
             System.out.println(
                 INDENT + "Congrats! I've marked this task as done:\n" +
-                INDENT + "  " + tasks[num-1]
+                INDENT + "  " + tasks.get(num-1)
             );
         }
     }
@@ -98,13 +97,13 @@ public class Omni {
             return;
         }
 
-        if (num > taskCount) {
+        if (num > tasks.size()) {
             throw new InvalidArgumentException("That task does not exist! Try again!");
         } else {
-            tasks[num-1].unmarkDone();
+            tasks.get(num-1).unmarkDone();
             System.out.println(
                 INDENT + "Sure thing, I've marked this task as not done yet:\n" +
-                INDENT + "  " + tasks[num-1]
+                INDENT + "  " + tasks.get(num-1)
             );
         }
     }
@@ -118,13 +117,12 @@ public class Omni {
             throw new InvalidArgumentException("Give your todo a description!");
         }
         Todo newTodo = new Todo(arg);
-        tasks[taskCount] = newTodo;
-        taskCount++;
-        String taskStr = taskCount == 1 ? "task" : "tasks";
+        tasks.add(newTodo);
+        String taskStr = tasks.size() == 1 ? "task" : "tasks";
         System.out.println(
             INDENT + "Got it. I've added this task:\n" +
             INDENT + "  " + newTodo + "\n" +
-            INDENT + "Now you have " + taskCount + " " + taskStr + " in the list."
+            INDENT + "Now you have " + tasks.size() + " " + taskStr + " in the list."
         );
     }
 
@@ -139,13 +137,12 @@ public class Omni {
             }
             String date = parts[1].trim();
             Deadline newDeadline = new Deadline(description, date);
-            tasks[taskCount] = newDeadline;
-            taskCount++;
-            String taskStr = taskCount == 1 ? "task" : "tasks";
+            tasks.add(newDeadline);
+            String taskStr = tasks.size() == 1 ? "task" : "tasks";
             System.out.println(
                 INDENT + "Got it. I've added this task:\n" +
                 INDENT + "  " + newDeadline + "\n" +
-                INDENT + "Now you have " + taskCount + " " + taskStr + " in the list."
+                INDENT + "Now you have " + tasks.size() + " " + taskStr + " in the list."
             );
         }
     }
@@ -164,13 +161,12 @@ public class Omni {
                 throw new InvalidArgumentException("Unable to set event, remember to use /from and /to in that order!");
             } else {
                 Event newEvent = new Event(description, dates[0].trim(), dates[1].trim());
-                tasks[taskCount] = newEvent;
-                taskCount++;
-                String taskStr = taskCount == 1 ? "task" : "tasks";
+                tasks.add(newEvent);
+                String taskStr = tasks.size() == 1 ? "task" : "tasks";
                 System.out.println(
                     INDENT + "Got it. I've added this task:\n" +
                     INDENT + "  " + newEvent + "\n" +
-                    INDENT + "Now you have " + taskCount + " " + taskStr + " in the list."
+                    INDENT + "Now you have " + tasks.size() + " " + taskStr + " in the list."
                 );
             }
         }
