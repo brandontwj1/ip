@@ -1,4 +1,4 @@
-import org.w3c.dom.html.HTMLObjectElement;
+import exceptions.*;
 
 import java.util.Scanner;
 import java.util.regex.*;
@@ -26,6 +26,7 @@ public class Omni {
         );
     }
 
+    /*
     private static void echo(String input) {
         System.out.println(
             HORIZONTAL_LINE +
@@ -33,13 +34,15 @@ public class Omni {
             HORIZONTAL_LINE
         );
     }
+    */
 
-    private static void printErrorMessage() {
+    private static void printErrorMessage() throws OmniException {
         System.out.println(
             HORIZONTAL_LINE +
-            INDENT + "My bad something went wrong. Try again!\n" +
+            INDENT + "My bad, something went wrong. Try again!\n" +
             HORIZONTAL_LINE
         );
+        throw new OmniException("My bad, something went wrong. Try again!");
     }
 
     private static void addTask(String input) {
@@ -53,10 +56,8 @@ public class Omni {
     }
 
     private static void handleList() {
-        System.out.print(HORIZONTAL_LINE);
         if (taskCount == 0) {
             System.out.println(INDENT + "You have no tasks... Add one!");
-            System.out.print(HORIZONTAL_LINE);
             return;
         }
         System.out.print(INDENT + "Here are the tasks you've added:\n");
@@ -64,12 +65,10 @@ public class Omni {
             Task t = tasks[i];
             System.out.printf(INDENT + "%d.%s\n", i+1, t);
         }
-        System.out.println(HORIZONTAL_LINE);
     }
 
 
-    private static void handleMark(String n) {
-        System.out.print(HORIZONTAL_LINE);
+    private static void handleMark(String n) throws InvalidArgumentException {
         int num;
         try {
             num = Integer.parseInt(n);
@@ -79,7 +78,7 @@ public class Omni {
         }
 
         if (num > taskCount) {
-            System.out.println(INDENT + "That task does not exist! Try again!");
+            throw new InvalidArgumentException("That task does not exist! Try again!");
         } else {
             tasks[num-1].markDone();
             System.out.println(
@@ -87,12 +86,10 @@ public class Omni {
                 INDENT + "  " + tasks[num-1]
             );
         }
-        System.out.println(HORIZONTAL_LINE);
     }
 
 
-    private static void handleUnmark(String n) {
-        System.out.print(HORIZONTAL_LINE);
+    private static void handleUnmark(String n) throws InvalidArgumentException {
         int num;
         try {
             num = Integer.parseInt(n);
@@ -102,7 +99,7 @@ public class Omni {
         }
 
         if (num > taskCount) {
-            System.out.println(INDENT + "That task does not exist! Try again!");
+            throw new InvalidArgumentException("That task does not exist! Try again!");
         } else {
             tasks[num-1].unmarkDone();
             System.out.println(
@@ -110,38 +107,36 @@ public class Omni {
                 INDENT + "  " + tasks[num-1]
             );
         }
-        System.out.println(HORIZONTAL_LINE);
     }
 
-    private static void handleUnknownCmd() {
-        System.out.println(
-            HORIZONTAL_LINE +
-            INDENT + "I can't lie I have no idea what that means...\n" +
-            HORIZONTAL_LINE
-        );
+    private static void handleUnknownCmd() throws UnknownCommandException {
+        throw new UnknownCommandException("I can't lie I have no idea what that means...");
     }
 
-    private static void handleTodo(String arg) {
+    private static void handleTodo(String arg) throws InvalidArgumentException {
+        if (arg.isEmpty()) {
+            throw new InvalidArgumentException("Give your todo a description!");
+        }
         Todo newTodo = new Todo(arg);
         tasks[taskCount] = newTodo;
         taskCount++;
         String taskStr = taskCount == 1 ? "task" : "tasks";
         System.out.println(
-            HORIZONTAL_LINE +
             INDENT + "Got it. I've added this task:\n" +
             INDENT + "  " + newTodo + "\n" +
-            INDENT + "Now you have " + taskCount + " " + taskStr + " in the list.\n" +
-            HORIZONTAL_LINE
+            INDENT + "Now you have " + taskCount + " " + taskStr + " in the list."
         );
     }
 
-    private static void handleDeadline(String arg) {
-        System.out.print(HORIZONTAL_LINE);
+    private static void handleDeadline(String arg) throws InvalidArgumentException {
         String[] parts = arg.split("/by", 2);
         if (parts.length < 2) {
-            System.out.println(INDENT + "Unable to set deadline, remember to use /by to specify your deadline!");
+            throw new InvalidArgumentException("Unable to set deadline, remember to use /by to specify your deadline!");
         } else {
             String description = parts[0].trim();
+            if (description.isEmpty()) {
+                throw new InvalidArgumentException("Give your deadline a description!");
+            }
             String date = parts[1].trim();
             Deadline newDeadline = new Deadline(description, date);
             tasks[taskCount] = newDeadline;
@@ -153,19 +148,20 @@ public class Omni {
                 INDENT + "Now you have " + taskCount + " " + taskStr + " in the list."
             );
         }
-        System.out.println(HORIZONTAL_LINE);
     }
 
-    private static void handleEvent(String arg) {
-        System.out.print(HORIZONTAL_LINE);
+    private static void handleEvent(String arg) throws InvalidArgumentException {
         String[] parts = arg.split("/from", 2);
         if (parts.length < 2) {
-            System.out.println(INDENT + "Unable to set Event, remember to use /from and /to in that order!");
+            throw new InvalidArgumentException("Unable to set Event, remember to use /from and /to in that order!");
         } else {
             String description = parts[0].trim();
+            if (description.isEmpty()) {
+                throw new InvalidArgumentException("Give your event a description!");
+            }
             String[] dates = parts[1].trim().split("/to", 2);
             if (dates.length < 2) {
-                System.out.println(INDENT + "Unable to set event, remember to use /from and /to in that order!");
+                throw new InvalidArgumentException("Unable to set event, remember to use /from and /to in that order!");
             } else {
                 Event newEvent = new Event(description, dates[0].trim(), dates[1].trim());
                 tasks[taskCount] = newEvent;
@@ -178,7 +174,6 @@ public class Omni {
                 );
             }
         }
-        System.out.println(HORIZONTAL_LINE);
     }
 
     public static void main(String[] args) {
@@ -189,28 +184,35 @@ public class Omni {
         String cmd = parts[0];
         String arg = parts.length > 1 ? parts[1] : "";
         while (!cmd.equals("bye")) {
-            switch (cmd.toLowerCase()) {
-            case "list":
-                Omni.handleList();
-                break;
-            case "mark":
-                Omni.handleMark(arg);
-                break;
-            case "unmark":
-                Omni.handleUnmark(arg);
-                break;
-            case "todo":
-                Omni.handleTodo(arg);
-                break;
-            case "deadline":
-                Omni.handleDeadline(arg);
-                break;
-            case "event":
-                Omni.handleEvent(arg);
-                break;
-            default:
-                Omni.handleUnknownCmd();
+            System.out.print(HORIZONTAL_LINE);
+            try {
+                switch (cmd.toLowerCase()) {
+                    case "list":
+                        Omni.handleList();
+                        break;
+                    case "mark":
+                        Omni.handleMark(arg);
+                        break;
+                    case "unmark":
+                        Omni.handleUnmark(arg);
+                        break;
+                    case "todo":
+                        Omni.handleTodo(arg);
+                        break;
+                    case "deadline":
+                        Omni.handleDeadline(arg);
+                        break;
+                    case "event":
+                        Omni.handleEvent(arg);
+                        break;
+                    default:
+                        Omni.handleUnknownCmd();
+                }
+            } catch (OmniException e) {
+                System.out.println(INDENT + e.getUserMessage());
             }
+            System.out.println(HORIZONTAL_LINE);
+
             input = sc.nextLine().trim();
             parts = input.split("\\s+", 2);
             cmd = parts[0];

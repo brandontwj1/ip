@@ -1,15 +1,22 @@
 list
 hi
+todo
 todo make lunch
+deadline
 deadline do homework by tuesday 12pm
 deadline do homework /by tuesday 12pm
+event
 event project meeting /from Mon 4pm
 event project meeting /to 6pm
 event project meeting /from Mon 4pm /to 6pm
 todo buy concert tickets
+mark
 mark 2
+mark 6
 mark 4
 list
+unmark
+unmark 78
 unmark 2
 list
 bye
