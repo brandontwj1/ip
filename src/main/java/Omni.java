@@ -53,17 +53,23 @@ public class Omni {
     }
 
     private static void handleList() {
-        System.out.print(HORIZONTAL_LINE + INDENT + "Here are the tasks you've added:\n");
+        System.out.print(HORIZONTAL_LINE);
+        if (taskCount == 0) {
+            System.out.println(INDENT + "You have no tasks.. Add one!");
+            System.out.print(HORIZONTAL_LINE);
+            return;
+        }
+        System.out.print(INDENT + "Here are the tasks you've added:\n");
         for (int i = 0; i < taskCount; i++) {
             Task t = tasks[i];
             System.out.printf(INDENT + "%d.%s\n", i+1, t);
         }
-        System.out.print(HORIZONTAL_LINE);
+        System.out.println(HORIZONTAL_LINE);
     }
 
 
     private static void handleMark(String n) {
-        System.out.println(HORIZONTAL_LINE);
+        System.out.print(HORIZONTAL_LINE);
         int num;
         try {
             num = Integer.parseInt(n);
@@ -78,7 +84,7 @@ public class Omni {
             tasks[num-1].markDone();
             System.out.println(
                 INDENT + "Congrats! I've marked this task as done:\n" +
-                INDENT + tasks[num-1]
+                INDENT + "  " + tasks[num-1]
             );
         }
         System.out.println(HORIZONTAL_LINE);
@@ -86,7 +92,7 @@ public class Omni {
 
 
     private static void handleUnmark(String n) {
-        System.out.println(HORIZONTAL_LINE);
+        System.out.print(HORIZONTAL_LINE);
         int num;
         try {
             num = Integer.parseInt(n);
@@ -101,7 +107,7 @@ public class Omni {
             tasks[num-1].unmarkDone();
             System.out.println(
                 INDENT + "Sure thing, I've marked this task as not done yet:\n" +
-                INDENT + tasks[num-1]
+                INDENT + "  " + tasks[num-1]
             );
         }
         System.out.println(HORIZONTAL_LINE);
@@ -113,6 +119,66 @@ public class Omni {
             INDENT + "I can't lie I have no idea what that means...\n" +
             HORIZONTAL_LINE
         );
+    }
+
+    private static void handleTodo(String arg) {
+        Todo newTodo = new Todo(arg);
+        tasks[taskCount] = newTodo;
+        taskCount++;
+        String taskStr = taskCount == 1 ? "task" : "tasks";
+        System.out.println(
+            HORIZONTAL_LINE +
+            INDENT + "Got it. I've added this task:\n" +
+            INDENT + "  " + newTodo + "\n" +
+            INDENT + "Now you have " + taskCount + " " + taskStr + " in the list.\n" +
+            HORIZONTAL_LINE
+        );
+    }
+
+    private static void handleDeadline(String arg) {
+        System.out.print(HORIZONTAL_LINE);
+        String[] parts = arg.split("/by", 2);
+        if (parts.length < 2) {
+            System.out.println(INDENT + "Unable to set deadline, remember to use /by to specify your deadline!");
+        } else {
+            String description = parts[0].trim();
+            String date = parts[1].trim();
+            Deadline newDeadline = new Deadline(description, date);
+            tasks[taskCount] = newDeadline;
+            taskCount++;
+            String taskStr = taskCount == 1 ? "task" : "tasks";
+            System.out.println(
+                INDENT + "Got it. I've added this task:\n" +
+                INDENT + "  " + newDeadline + "\n" +
+                INDENT + "Now you have " + taskCount + " " + taskStr + " in the list."
+            );
+        }
+        System.out.println(HORIZONTAL_LINE);
+    }
+
+    private static void handleEvent(String arg) {
+        System.out.print(HORIZONTAL_LINE);
+        String[] parts = arg.split("/from", 2);
+        if (parts.length < 2) {
+            System.out.println(INDENT + "Unable to set Event, remember to use /from and /to in that order!");
+        } else {
+            String description = parts[0].trim();
+            String[] dates = parts[1].trim().split("/to", 2);
+            if (dates.length < 2) {
+                System.out.println(INDENT + "Unable to set Event, remember to use /from and /to in that order!");
+            } else {
+                Event newEvent = new Event(description, dates[0].trim(), dates[1].trim());
+                tasks[taskCount] = newEvent;
+                taskCount++;
+                String taskStr = taskCount == 1 ? "task" : "tasks";
+                System.out.println(
+                        INDENT + "Got it. I've added this task:\n" +
+                                INDENT + "  " + newEvent + "\n" +
+                                INDENT + "Now you have " + taskCount + " " + taskStr + " in the list."
+                );
+            }
+        }
+        System.out.println(HORIZONTAL_LINE);
     }
 
     public static void main(String[] args) {
@@ -133,9 +199,17 @@ public class Omni {
             case "unmark":
                 Omni.handleUnmark(arg);
                 break;
+            case "todo":
+                Omni.handleTodo(arg);
+                break;
+            case "deadline":
+                Omni.handleDeadline(arg);
+                break;
+            case "event":
+                Omni.handleEvent(arg);
+                break;
             default:
-                //Omni.handleUnknownCmd();
-                Omni.addTask(input);
+                Omni.handleUnknownCmd();
             }
             input = sc.nextLine().trim();
             parts = input.split("\\s+", 2);
