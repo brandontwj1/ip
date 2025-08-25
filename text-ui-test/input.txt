@@ -19,4 +19,7 @@ unmark
 unmark 78
 unmark 2
 list
+delete
+delete 2
+list
 bye

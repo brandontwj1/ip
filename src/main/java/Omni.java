@@ -172,6 +172,26 @@ public class Omni {
         }
     }
 
+    private static void handleDelete(String n) throws InvalidArgumentException {
+        int num;
+        try {
+            num = Integer.parseInt(n);
+        } catch (NumberFormatException e) {
+            System.out.println(INDENT + "Invalid delete command. Try again.");
+            return;
+        }
+
+        if (num > tasks.size()) {
+            throw new InvalidArgumentException("That task does not exist! Try again!");
+        } else {
+            Task removedTask = tasks.remove(num-1);
+            System.out.println(
+                INDENT + "Gotchu, I've deleted this task for you:\n" +
+                INDENT + "  " + removedTask
+            );
+        }
+    }
+
     public static void main(String[] args) {
         Omni.greet();
         Scanner sc = new Scanner(System.in);
@@ -200,6 +220,9 @@ public class Omni {
                         break;
                     case "event":
                         Omni.handleEvent(arg);
+                        break;
+                    case "delete":
+                        Omni.handleDelete(arg);
                         break;
                     default:
                         Omni.handleUnknownCmd();
