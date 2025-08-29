@@ -1,13 +1,21 @@
 import exceptions.*;
 
+import java.util.List;
 import java.util.ArrayList;
 import java.util.Scanner;
 import java.util.regex.*;
+import java.nio.file.Path;
+import java.nio.file.Paths;
+import java.nio.file.Files;
+import java.io.IOException;
+
+import static java.lang.Integer.parseInt;
+
 
 public class Omni {
     private static final String HORIZONTAL_LINE = "   _________________________________________________________\n";
     private static final String INDENT = "    ";
-    private static ArrayList<Task> tasks = new ArrayList<>();
+    private static final ArrayList<Task> tasks = new ArrayList<>();
 
     private static void greet() {
         System.out.println(
@@ -45,6 +53,7 @@ public class Omni {
         throw new OmniException("My bad, something went wrong. Try again!");
     }
 
+    /*
     private static void addTask(String input) {
         tasks.add(new Task(input));
         System.out.println(
@@ -53,6 +62,7 @@ public class Omni {
             HORIZONTAL_LINE
         );
     }
+    */
 
     private static void handleList() {
         if (tasks.isEmpty()) {
@@ -70,7 +80,7 @@ public class Omni {
     private static void handleMark(String n) throws InvalidArgumentException {
         int num;
         try {
-            num = Integer.parseInt(n);
+            num = parseInt(n);
         } catch (NumberFormatException e) {
             System.out.println(INDENT + "Invalid mark command. Try again.");
             return;
@@ -91,7 +101,7 @@ public class Omni {
     private static void handleUnmark(String n) throws InvalidArgumentException {
         int num;
         try {
-            num = Integer.parseInt(n);
+            num = parseInt(n);
         } catch (NumberFormatException e) {
             System.out.println(INDENT + "Invalid unmark command. Try again.");
             return;
@@ -116,7 +126,7 @@ public class Omni {
         if (arg.isEmpty()) {
             throw new InvalidArgumentException("Give your todo a description!");
         }
-        Todo newTodo = new Todo(arg);
+        Todo newTodo = new Todo(arg, false);
         tasks.add(newTodo);
         String taskStr = tasks.size() == 1 ? "task" : "tasks";
         System.out.println(
@@ -136,7 +146,7 @@ public class Omni {
                 throw new InvalidArgumentException("Give your deadline a description!");
             }
             String date = parts[1].trim();
-            Deadline newDeadline = new Deadline(description, date);
+            Deadline newDeadline = new Deadline(description, false, date);
             tasks.add(newDeadline);
             String taskStr = tasks.size() == 1 ? "task" : "tasks";
             System.out.println(
@@ -160,7 +170,7 @@ public class Omni {
             if (dates.length < 2) {
                 throw new InvalidArgumentException("Unable to set event, remember to use /from and /to in that order!");
             } else {
-                Event newEvent = new Event(description, dates[0].trim(), dates[1].trim());
+                Event newEvent = new Event(description, false, dates[0].trim(), dates[1].trim());
                 tasks.add(newEvent);
                 String taskStr = tasks.size() == 1 ? "task" : "tasks";
                 System.out.println(
@@ -175,7 +185,7 @@ public class Omni {
     private static void handleDelete(String n) throws InvalidArgumentException {
         int num;
         try {
-            num = Integer.parseInt(n);
+            num = parseInt(n);
         } catch (NumberFormatException e) {
             System.out.println(INDENT + "Invalid delete command. Try again.");
             return;
@@ -192,40 +202,112 @@ public class Omni {
         }
     }
 
+    private static boolean initTaskList() throws CorruptedFileException {
+        Path taskListPath = Paths.get("data", "tasks.txt");
+        if (!Files.exists(taskListPath)) {
+            try {
+                Files.createDirectories(taskListPath.getParent());
+                Files.createFile(taskListPath);
+            } catch (IOException e) {
+                System.out.println("Error creating tasks.txt file: " + e.getMessage());
+                return false;
+            }
+        }
+
+        try {
+            List<String> lines = Files.readAllLines(taskListPath);
+            for (String line : lines) {
+                String[] values = line.split("\\|");
+                if (values.length < 3 || values.length > 5) {
+                    throw new CorruptedFileException("Error reading from hard disk.");
+                } else {
+                    String type = values[0].trim();
+                    String desc = values[1].trim();
+                    boolean isDone = parseInt(values[2].trim()) != 0;
+                    switch (type) {
+                        case "T":
+                            if (values.length != 3) {
+                                throw new CorruptedFileException("Error reading from hard disk.");
+                            }
+                            tasks.add(new Todo(desc, isDone));
+                            break;
+                        case "D":
+                            if (values.length != 4) {
+                                throw new CorruptedFileException("Error reading from hard disk.");
+                            }
+                            tasks.add(new Deadline(desc, isDone, values[3].trim()));
+                            break;
+                        case "E":
+                            if (values.length != 5) {
+                                throw new CorruptedFileException("Error reading from hard disk.");
+                            }
+                            tasks.add(new Event(desc, isDone, values[3].trim(), values[4].trim()));
+                            break;
+                        default:
+                            throw new CorruptedFileException("Error reading from hard disk.");
+                    }
+                }
+            }
+        } catch (IOException e) {
+            System.out.println("Error creating tasks.txt file: " + e.getMessage());
+            return false;
+        }
+
+        return true;
+    }
+
     public static void main(String[] args) {
         Omni.greet();
+        boolean initTest = false;
+
+        try {
+            initTest = Omni.initTaskList();
+            if (!initTest) {
+                System.out.println("Error initialising task list");
+                return;
+            }
+        } catch (OmniException e) {
+            System.out.println(INDENT + e.getUserMessage());
+            return;
+        }
+
+
         Scanner sc = new Scanner(System.in);
         String input = sc.nextLine().trim();
         String[] parts = input.split("\\s+", 2);
         String cmd = parts[0];
         String arg = parts.length > 1 ? parts[1] : "";
+
+
+
+
         while (!cmd.equals("bye")) {
             System.out.print(HORIZONTAL_LINE);
             try {
                 switch (cmd.toLowerCase()) {
-                    case "list":
-                        Omni.handleList();
-                        break;
-                    case "mark":
-                        Omni.handleMark(arg);
-                        break;
-                    case "unmark":
-                        Omni.handleUnmark(arg);
-                        break;
-                    case "todo":
-                        Omni.handleTodo(arg);
-                        break;
-                    case "deadline":
-                        Omni.handleDeadline(arg);
-                        break;
-                    case "event":
-                        Omni.handleEvent(arg);
-                        break;
-                    case "delete":
-                        Omni.handleDelete(arg);
-                        break;
-                    default:
-                        Omni.handleUnknownCmd();
+                case "list":
+                    Omni.handleList();
+                    break;
+                case "mark":
+                    Omni.handleMark(arg);
+                    break;
+                case "unmark":
+                    Omni.handleUnmark(arg);
+                    break;
+                case "todo":
+                    Omni.handleTodo(arg);
+                    break;
+                case "deadline":
+                    Omni.handleDeadline(arg);
+                    break;
+                case "event":
+                    Omni.handleEvent(arg);
+                    break;
+                case "delete":
+                    Omni.handleDelete(arg);
+                    break;
+                default:
+                    Omni.handleUnknownCmd();
                 }
             } catch (OmniException e) {
                 System.out.println(INDENT + e.getUserMessage());
