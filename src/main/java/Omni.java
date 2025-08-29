@@ -68,8 +68,13 @@ public class Omni {
         }
     }
 
+    private static void markData(Task task, int index, boolean mark) throws IOException {
+        List<String> lines = Files.readAllLines(PATH_TASKLIST);
+        String newEntry = task.getEntryString();
+    }
 
-    private static void handleMark(String n) throws InvalidArgumentException {
+
+    private static void handleMark(String n) throws InvalidArgumentException, IOException {
         int num;
         try {
             num = parseInt(n);
@@ -81,7 +86,9 @@ public class Omni {
         if (num > tasks.size()) {
             throw new InvalidArgumentException("That task does not exist! Try again!");
         } else {
-            tasks.get(num-1).markDone();
+            Task t = tasks.get(num-1);
+            t.markDone();
+            markData(t,num-1, true);
             System.out.println(
                 INDENT + "Congrats! I've marked this task as done:\n" +
                 INDENT + "  " + tasks.get(num-1)
@@ -90,7 +97,7 @@ public class Omni {
     }
 
 
-    private static void handleUnmark(String n) throws InvalidArgumentException {
+    private static void handleUnmark(String n) throws InvalidArgumentException, IOException {
         int num;
         try {
             num = parseInt(n);
@@ -102,7 +109,9 @@ public class Omni {
         if (num > tasks.size()) {
             throw new InvalidArgumentException("That task does not exist! Try again!");
         } else {
-            tasks.get(num-1).unmarkDone();
+            Task t = tasks.get(num-1);
+            t.unmarkDone();
+            markData(t,num-1, false);
             System.out.println(
                 INDENT + "Sure thing, I've marked this task as not done yet:\n" +
                 INDENT + "  " + tasks.get(num-1)
@@ -114,8 +123,8 @@ public class Omni {
         throw new UnknownCommandException("I can't lie I have no idea what that means...");
     }
 
-    private static void addTask(Task task, String entry) throws IOException {
-        Files.writeString(PATH_TASKLIST, entry, StandardOpenOption.APPEND);
+    private static void addTask(Task task) throws IOException {
+        Files.writeString(PATH_TASKLIST, task.getEntryString(), StandardOpenOption.APPEND);
         tasks.add(task);
         String taskStr = tasks.size() == 1 ? "task" : "tasks";
         System.out.println(
@@ -131,9 +140,7 @@ public class Omni {
         }
 
         Todo newTodo = new Todo(arg, false);
-        String isDone = newTodo.isDone() ? "1" : "0";
-        String entry = "T | " + newTodo.getDescription() + " | " + isDone + "\n";
-        addTask(newTodo, entry);
+        addTask(newTodo);
     }
 
     private static void handleDeadline(String arg) throws InvalidArgumentException, IOException {
@@ -147,9 +154,7 @@ public class Omni {
             }
             String date = parts[1].trim();
             Deadline newDeadline = new Deadline(description, false, date);
-            String isDone = newDeadline.isDone() ? "1" : "0";
-            String entry = "D | " + newDeadline.getDescription() + " | " + isDone + " | " + date + "\n";
-            addTask(newDeadline, entry);
+            addTask(newDeadline);
         }
     }
 
@@ -169,9 +174,7 @@ public class Omni {
                 String from = dates[0].trim();
                 String to = dates[1].trim();
                 Event newEvent = new Event(description, false, from, to);
-                String isDone = newEvent.isDone() ? "1" : "0";
-                String entry = "E | " + newEvent.getDescription() + " | " + isDone + " | " + from + " | " + to + "\n";
-                addTask(newEvent, entry);
+                addTask(newEvent);
             }
         }
     }
@@ -227,13 +230,13 @@ public class Omni {
                             break;
                         case "D":
                             if (values.length != 4) {
-                                throw new CorruptedFileException("Entry length for todo invalid.");
+                                throw new CorruptedFileException("Entry length for deadline invalid.");
                             }
                             tasks.add(new Deadline(desc, isDone, values[3].trim()));
                             break;
                         case "E":
                             if (values.length != 5) {
-                                throw new CorruptedFileException("Entry length for todo invalid.");
+                                throw new CorruptedFileException("Entry length for event invalid.");
                             }
                             tasks.add(new Event(desc, isDone, values[3].trim(), values[4].trim()));
                             break;
