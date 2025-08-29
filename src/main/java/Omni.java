@@ -1,5 +1,6 @@
 import exceptions.*;
 
+import java.nio.file.StandardOpenOption;
 import java.util.List;
 import java.util.ArrayList;
 import java.util.Scanner;
@@ -16,6 +17,7 @@ public class Omni {
     private static final String HORIZONTAL_LINE = "   _________________________________________________________\n";
     private static final String INDENT = "    ";
     private static final ArrayList<Task> tasks = new ArrayList<>();
+    private static final Path PATH_TASKLIST = Paths.get("data", "tasks.txt");
 
     private static void greet() {
         System.out.println(
@@ -53,16 +55,6 @@ public class Omni {
         throw new OmniException("My bad, something went wrong. Try again!");
     }
 
-    /*
-    private static void addTask(String input) {
-        tasks.add(new Task(input));
-        System.out.println(
-            HORIZONTAL_LINE +
-            INDENT + "Added: " + input + "\n" +
-            HORIZONTAL_LINE
-        );
-    }
-    */
 
     private static void handleList() {
         if (tasks.isEmpty()) {
@@ -118,25 +110,33 @@ public class Omni {
         }
     }
 
-    private static void handleUnknownCmd() throws UnknownCommandException {
+    private static void handleUnknownCmd() throws UnknownCommandException, IOException {
         throw new UnknownCommandException("I can't lie I have no idea what that means...");
     }
 
-    private static void handleTodo(String arg) throws InvalidArgumentException {
-        if (arg.isEmpty()) {
-            throw new InvalidArgumentException("Give your todo a description!");
-        }
-        Todo newTodo = new Todo(arg, false);
-        tasks.add(newTodo);
+    private static void addTask(Task task, String entry) throws IOException {
+        Files.writeString(PATH_TASKLIST, entry, StandardOpenOption.APPEND);
+        tasks.add(task);
         String taskStr = tasks.size() == 1 ? "task" : "tasks";
         System.out.println(
             INDENT + "Got it. I've added this task:\n" +
-            INDENT + "  " + newTodo + "\n" +
+            INDENT + "  " + task + "\n" +
             INDENT + "Now you have " + tasks.size() + " " + taskStr + " in the list."
         );
     }
 
-    private static void handleDeadline(String arg) throws InvalidArgumentException {
+    private static void handleTodo(String arg) throws InvalidArgumentException, IOException {
+        if (arg.isEmpty()) {
+            throw new InvalidArgumentException("Give your todo a description!");
+        }
+
+        Todo newTodo = new Todo(arg, false);
+        String isDone = newTodo.isDone() ? "1" : "0";
+        String entry = "T | " + newTodo.getDescription() + " | " + isDone + "\n";
+        addTask(newTodo, entry);
+    }
+
+    private static void handleDeadline(String arg) throws InvalidArgumentException, IOException {
         String[] parts = arg.split("/by", 2);
         if (parts.length < 2) {
             throw new InvalidArgumentException("Unable to set deadline, remember to use /by to specify your deadline!");
@@ -147,17 +147,13 @@ public class Omni {
             }
             String date = parts[1].trim();
             Deadline newDeadline = new Deadline(description, false, date);
-            tasks.add(newDeadline);
-            String taskStr = tasks.size() == 1 ? "task" : "tasks";
-            System.out.println(
-                INDENT + "Got it. I've added this task:\n" +
-                INDENT + "  " + newDeadline + "\n" +
-                INDENT + "Now you have " + tasks.size() + " " + taskStr + " in the list."
-            );
+            String isDone = newDeadline.isDone() ? "1" : "0";
+            String entry = "D | " + newDeadline.getDescription() + " | " + isDone + " | " + date + "\n";
+            addTask(newDeadline, entry);
         }
     }
 
-    private static void handleEvent(String arg) throws InvalidArgumentException {
+    private static void handleEvent(String arg) throws InvalidArgumentException, IOException {
         String[] parts = arg.split("/from", 2);
         if (parts.length < 2) {
             throw new InvalidArgumentException("Unable to set Event, remember to use /from and /to in that order!");
@@ -170,14 +166,12 @@ public class Omni {
             if (dates.length < 2) {
                 throw new InvalidArgumentException("Unable to set event, remember to use /from and /to in that order!");
             } else {
-                Event newEvent = new Event(description, false, dates[0].trim(), dates[1].trim());
-                tasks.add(newEvent);
-                String taskStr = tasks.size() == 1 ? "task" : "tasks";
-                System.out.println(
-                    INDENT + "Got it. I've added this task:\n" +
-                    INDENT + "  " + newEvent + "\n" +
-                    INDENT + "Now you have " + tasks.size() + " " + taskStr + " in the list."
-                );
+                String from = dates[0].trim();
+                String to = dates[1].trim();
+                Event newEvent = new Event(description, false, from, to);
+                String isDone = newEvent.isDone() ? "1" : "0";
+                String entry = "E | " + newEvent.getDescription() + " | " + isDone + " | " + from + " | " + to + "\n";
+                addTask(newEvent, entry);
             }
         }
     }
@@ -219,7 +213,7 @@ public class Omni {
             for (String line : lines) {
                 String[] values = line.split("\\|");
                 if (values.length < 3 || values.length > 5) {
-                    throw new CorruptedFileException("Error reading from hard disk.");
+                    throw new CorruptedFileException("Entry length invalid.");
                 } else {
                     String type = values[0].trim();
                     String desc = values[1].trim();
@@ -227,24 +221,24 @@ public class Omni {
                     switch (type) {
                         case "T":
                             if (values.length != 3) {
-                                throw new CorruptedFileException("Error reading from hard disk.");
+                                throw new CorruptedFileException("Entry length for todo invalid.");
                             }
                             tasks.add(new Todo(desc, isDone));
                             break;
                         case "D":
                             if (values.length != 4) {
-                                throw new CorruptedFileException("Error reading from hard disk.");
+                                throw new CorruptedFileException("Entry length for todo invalid.");
                             }
                             tasks.add(new Deadline(desc, isDone, values[3].trim()));
                             break;
                         case "E":
                             if (values.length != 5) {
-                                throw new CorruptedFileException("Error reading from hard disk.");
+                                throw new CorruptedFileException("Entry length for todo invalid.");
                             }
                             tasks.add(new Event(desc, isDone, values[3].trim(), values[4].trim()));
                             break;
                         default:
-                            throw new CorruptedFileException("Error reading from hard disk.");
+                            throw new CorruptedFileException("Task type not found.");
                     }
                 }
             }
@@ -259,7 +253,6 @@ public class Omni {
     public static void main(String[] args) {
         Omni.greet();
         boolean initTest = false;
-
         try {
             initTest = Omni.initTaskList();
             if (!initTest) {
@@ -271,15 +264,11 @@ public class Omni {
             return;
         }
 
-
         Scanner sc = new Scanner(System.in);
         String input = sc.nextLine().trim();
         String[] parts = input.split("\\s+", 2);
         String cmd = parts[0];
         String arg = parts.length > 1 ? parts[1] : "";
-
-
-
 
         while (!cmd.equals("bye")) {
             System.out.print(HORIZONTAL_LINE);
@@ -311,6 +300,8 @@ public class Omni {
                 }
             } catch (OmniException e) {
                 System.out.println(INDENT + e.getUserMessage());
+            } catch (IOException e) {
+                System.out.println(INDENT + e.getMessage());
             }
             System.out.println(HORIZONTAL_LINE);
 
