@@ -1,4 +1,0 @@
-T | make lunch | 0
-D | do homework | 0 | tuesday 12pm
-D | project meeting | 0 | Mon 4pm | 6pm
-T | buy concert tickets | 0
