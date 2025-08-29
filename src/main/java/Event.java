@@ -19,7 +19,7 @@ public class Event extends Task {
     @Override
     public String getEntryString() {
         String done = this.isDone() ? "1" : "0";
-        return "E | " + this.getDescription() + " | " + done + " | " + start + " | " + end + "\n";
+        return "E | " + this.getDescription() + " | " + done + " | " + start + " | " + end ;
     }
 
 

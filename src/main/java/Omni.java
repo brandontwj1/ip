@@ -68,9 +68,11 @@ public class Omni {
         }
     }
 
-    private static void markData(Task task, int index, boolean mark) throws IOException {
+    private static void markData(Task task, int index) throws IOException {
         List<String> lines = Files.readAllLines(PATH_TASKLIST);
-        String newEntry = task.getEntryString();
+        lines.remove(index);
+        lines.add(index, task.getEntryString());
+        Files.write(PATH_TASKLIST, lines);
     }
 
 
@@ -88,7 +90,7 @@ public class Omni {
         } else {
             Task t = tasks.get(num-1);
             t.markDone();
-            markData(t,num-1, true);
+            markData(t,num-1);
             System.out.println(
                 INDENT + "Congrats! I've marked this task as done:\n" +
                 INDENT + "  " + tasks.get(num-1)
@@ -111,7 +113,7 @@ public class Omni {
         } else {
             Task t = tasks.get(num-1);
             t.unmarkDone();
-            markData(t,num-1, false);
+            markData(t,num-1);
             System.out.println(
                 INDENT + "Sure thing, I've marked this task as not done yet:\n" +
                 INDENT + "  " + tasks.get(num-1)
@@ -124,7 +126,7 @@ public class Omni {
     }
 
     private static void addTask(Task task) throws IOException {
-        Files.writeString(PATH_TASKLIST, task.getEntryString(), StandardOpenOption.APPEND);
+        Files.writeString(PATH_TASKLIST, task.getEntryString() + "\n", StandardOpenOption.APPEND);
         tasks.add(task);
         String taskStr = tasks.size() == 1 ? "task" : "tasks";
         System.out.println(
@@ -179,7 +181,7 @@ public class Omni {
         }
     }
 
-    private static void handleDelete(String n) throws InvalidArgumentException {
+    private static void handleDelete(String n) throws InvalidArgumentException, IOException {
         int num;
         try {
             num = parseInt(n);
@@ -191,7 +193,10 @@ public class Omni {
         if (num > tasks.size()) {
             throw new InvalidArgumentException("That task does not exist! Try again!");
         } else {
-            Task removedTask = tasks.remove(num-1);
+            Task removedTask = tasks.remove(num - 1);
+            List<String> lines = Files.readAllLines(PATH_TASKLIST);
+            lines.remove(num - 1 );
+            Files.write(PATH_TASKLIST, lines);
             System.out.println(
                 INDENT + "Gotchu, I've deleted this task for you:\n" +
                 INDENT + "  " + removedTask

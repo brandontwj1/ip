@@ -29,7 +29,7 @@ public class Task {
 
     public String getEntryString() {
         String done = this.isDone() ? "1" : "0";
-        return "T | " + this.getDescription() + " | " + done + "\n";
+        return "T | " + this.getDescription() + " | " + done;
     }
 
     @Override

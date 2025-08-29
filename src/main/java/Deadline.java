@@ -14,7 +14,7 @@ public class Deadline extends Task {
     @Override
     public String getEntryString() {
         String done = this.isDone() ? "1" : "0";
-        return "D | " + this.getDescription() + " | " + done + " | " + by + "\n";
+        return "D | " + this.getDescription() + " | " + done + " | " + by;
     }
 
 
