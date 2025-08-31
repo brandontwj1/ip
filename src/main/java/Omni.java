@@ -1,6 +1,9 @@
 import exceptions.*;
 
 import java.nio.file.StandardOpenOption;
+import java.time.LocalDate;
+import java.time.LocalTime;
+import java.time.format.DateTimeParseException;
 import java.util.List;
 import java.util.ArrayList;
 import java.util.Scanner;
@@ -9,8 +12,10 @@ import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.nio.file.Files;
 import java.io.IOException;
-
 import static java.lang.Integer.parseInt;
+import java.time.LocalDate;
+import java.time.LocalTime;
+import java.time.format.DateTimeFormatter;
 
 
 public class Omni {
@@ -18,6 +23,8 @@ public class Omni {
     private static final String INDENT = "    ";
     private static final ArrayList<Task> tasks = new ArrayList<>();
     private static final Path PATH_TASKLIST = Paths.get("data", "tasks.txt");
+    private static final DateTimeFormatter DATE_FORMATTER = DateTimeFormatter.ofPattern("dd-MM-yyyy");
+    private static final DateTimeFormatter TIME_FORMATTER = DateTimeFormatter.ofPattern("HHmm");
 
     private static void greet() {
         System.out.println(
@@ -145,6 +152,26 @@ public class Omni {
         addTask(newTodo);
     }
 
+    private static void checkValidDateString(String date) throws InvalidArgumentException {
+        String[] dateAndTime = date.split(" ");
+        if (dateAndTime.length > 2) {
+            throw new InvalidArgumentException("Invalid date format! Check your date and time is in the form" +
+                    " DD-MM-YYYY HHMM");
+        }
+        LocalDate d;
+        LocalTime t;
+        try {
+            String dateStr = dateAndTime[0].trim();
+            d = LocalDate.parse(dateStr, DATE_FORMATTER);
+            if (dateAndTime.length > 1) {
+                t = LocalTime.parse(dateAndTime[1].trim(), TIME_FORMATTER);
+            }
+        } catch (DateTimeParseException e) {
+            throw new InvalidArgumentException("Invalid date format! Check your date and time is in the form" +
+                    " DD-MM-YYYY HHMM");
+        }
+    }
+
     private static void handleDeadline(String arg) throws InvalidArgumentException, IOException {
         String[] parts = arg.split("/by", 2);
         if (parts.length < 2) {
@@ -155,6 +182,7 @@ public class Omni {
                 throw new InvalidArgumentException("Give your deadline a description!");
             }
             String date = parts[1].trim();
+            checkValidDateString(date);
             Deadline newDeadline = new Deadline(description, false, date);
             addTask(newDeadline);
         }
@@ -175,6 +203,8 @@ public class Omni {
             } else {
                 String from = dates[0].trim();
                 String to = dates[1].trim();
+                checkValidDateString(from);
+                checkValidDateString(to);
                 Event newEvent = new Event(description, false, from, to);
                 addTask(newEvent);
             }
