@@ -1,5 +1,9 @@
 T | read book | 0
-D | return book | 0 | June 6th
-E | project meeting | 0 | Aug 6th 2pm | Aug 6th 4pm
+D | return book | 0 | 01-09-2025
+E | project meeting | 0 | 03-10-2025 1400 | 03-10-2025 1600
 T | join sports club | 0
 T | task1 | 1
+D | my birthday! | 0 | 25-09-2025
+D | wake up | 1 | 25-09-2025 1000
+E | tuition | 0 | 01-09-2025 1400 | 01-09-2025 1600
+E | tuition | 1 | 01-09-2025 | 01-09-2025
