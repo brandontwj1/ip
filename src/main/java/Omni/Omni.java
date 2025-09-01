@@ -1,4 +1,10 @@
-import exceptions.OmniException;
+package Omni;
+
+import Omni.exceptions.OmniException;
+import Omni.storage.Storage;
+import Omni.parser.Parser;
+import Omni.tasklist.TaskList;
+import Omni.ui.Ui;
 
 import java.util.Scanner;
 

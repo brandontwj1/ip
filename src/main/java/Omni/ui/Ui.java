@@ -1,3 +1,8 @@
+package Omni.ui;
+import Omni.tasklist.TaskList;
+import Omni.tasks.Task;
+
+
 public class Ui {
     private static final String HORIZONTAL_LINE = "   _________________________________________________________\n";
     private static final String INDENT = "    ";

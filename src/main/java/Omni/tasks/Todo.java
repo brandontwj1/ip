@@ -1,3 +1,5 @@
+package Omni.tasks;
+
 public class Todo extends Task {
 
     public Todo(String description, boolean isDone) {

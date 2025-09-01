@@ -1,4 +1,8 @@
+package Omni.tasklist;
+
 import java.util.ArrayList;
+
+import Omni.tasks.Task;
 
 public class TaskList {
 

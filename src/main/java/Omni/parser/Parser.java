@@ -1,3 +1,5 @@
+package Omni.parser;
+
 import static java.lang.Integer.parseInt;
 
 import java.io.IOException;
@@ -6,9 +8,16 @@ import java.time.LocalTime;
 import java.time.format.DateTimeFormatter;
 import java.time.format.DateTimeParseException;
 
-import exceptions.InvalidArgumentException;
-import exceptions.OmniException;
-import exceptions.UnknownCommandException;
+import Omni.exceptions.InvalidArgumentException;
+import Omni.exceptions.OmniException;
+import Omni.exceptions.UnknownCommandException;
+import Omni.ui.Ui;
+import Omni.tasklist.TaskList;
+import Omni.storage.Storage;
+import Omni.tasks.Task;
+import Omni.tasks.Todo;
+import Omni.tasks.Deadline;
+import Omni.tasks.Event;
 
 public class Parser {
     private static final DateTimeFormatter DATE_FORMATTER = DateTimeFormatter.ofPattern("dd-MM-yyyy");
@@ -120,7 +129,7 @@ public class Parser {
     private void handleEvent(String arg) throws InvalidArgumentException, IOException {
         String[] parts = arg.split("/from", 2);
         if (parts.length < 2) {
-            throw new InvalidArgumentException("Unable to set Event, remember to use /from and /to in that order!");
+            throw new InvalidArgumentException("Unable to set Omni.tasks.Event, remember to use /from and /to in that order!");
         } else {
             String description = parts[0].trim();
             if (description.isEmpty()) {
