@@ -1,0 +1,24 @@
+T | make lunch | 0
+D | do homework | 1 | 01-01-2025 1200
+E | project meeting | 1 | 01-01-2025 1400 | 01-01-2025 1800
+T | buy concert tickets | 1
+T | make lunch | 1
+D | do homework | 0 | 01-01-2025 1200
+E | project meeting | 0 | 01-01-2025 1400 | 01-01-2025 1800
+T | buy concert tickets | 0
+T | make lunch | 0
+D | do homework | 0 | 01-01-2025 1200
+E | project meeting | 0 | 01-01-2025 1400 | 01-01-2025 1800
+T | buy concert tickets | 0
+T | make lunch | 0
+D | do homework | 0 | 01-01-2025 1200
+E | project meeting | 0 | 01-01-2025 1400 | 01-01-2025 1800
+T | buy concert tickets | 0
+T | make lunch | 0
+D | do homework | 0 | 01-01-2025 1200
+E | project meeting | 0 | 01-01-2025 1400 | 01-01-2025 1800
+T | buy concert tickets | 0
+T | make lunch | 0
+D | do homework | 0 | 01-01-2025 1200
+E | project meeting | 0 | 01-01-2025 1400 | 01-01-2025 1800
+T | buy concert tickets | 0
