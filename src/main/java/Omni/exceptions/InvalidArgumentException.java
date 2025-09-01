@@ -1,4 +1,4 @@
-package exceptions;
+package Omni.exceptions;
 
 public class InvalidArgumentException extends OmniException {
     public InvalidArgumentException(String message) {

@@ -1,3 +1,5 @@
+package Omni.storage;
+
 import static java.lang.Integer.parseInt;
 
 import java.io.IOException;
@@ -8,7 +10,11 @@ import java.nio.file.StandardOpenOption;
 import java.util.ArrayList;
 import java.util.List;
 
-import exceptions.CorruptedFileException;
+import Omni.exceptions.CorruptedFileException;
+import Omni.tasks.Deadline;
+import Omni.tasks.Event;
+import Omni.tasks.Task;
+import Omni.tasks.Todo;
 
 public class Storage {
     private Path tasksPath;
@@ -59,7 +65,7 @@ public class Storage {
                         tasks.add(new Event(desc, isDone, values[3].trim(), values[4].trim()));
                         break;
                     default:
-                        throw new CorruptedFileException("Task type not found.\n" + line);
+                        throw new CorruptedFileException("Omni.tasks.Task type not found.\n" + line);
                     }
                 }
             }
