@@ -5,10 +5,12 @@ todo make lunch
 deadline
 deadline do homework by tuesday 12pm
 deadline do homework /by tuesday 12pm
+deadline do homework /by 01-01-2025 12:00
+deadline do homework /by 01-01-2025 1200
 event
-event project meeting /from Mon 4pm
-event project meeting /to 6pm
-event project meeting /from Mon 4pm /to 6pm
+event project meeting /from 01-01-2025 1400
+event project meeting /to 01-01-2025 1800
+event project meeting /from 01-01-2025 1400 /to 01-01-2025 1800
 todo buy concert tickets
 mark
 mark 2

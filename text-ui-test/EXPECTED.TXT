@@ -1,4 +1,4 @@
-   _________________________________________________________
+_________________________________________________________
     Helloo! I'm Omni!
     What can I do for you?
    _________________________________________________________
@@ -30,8 +30,16 @@
    _________________________________________________________
 
    _________________________________________________________
+    Invalid date format! Check your date and time is in the form DD-MM-YYYY HHMM
+   _________________________________________________________
+
+   _________________________________________________________
+    Invalid date format! Check your date and time is in the form DD-MM-YYYY HHMM
+   _________________________________________________________
+
+   _________________________________________________________
     Got it. I've added this task:
-      [D][ ] do homework (by: tuesday 12pm)
+      [D][ ] do homework (by: Jan 1 2025 12:00)
     Now you have 2 tasks in the list.
    _________________________________________________________
 
@@ -49,7 +57,7 @@
 
    _________________________________________________________
     Got it. I've added this task:
-      [E][ ] project meeting (from: Mon 4pm to: 6pm)
+      [E][ ] project meeting (from: Jan 1 2025 14:00 to: Jan 1 2025 18:00)
     Now you have 3 tasks in the list.
    _________________________________________________________
 
@@ -65,7 +73,7 @@
 
    _________________________________________________________
     Congrats! I've marked this task as done:
-      [D][X] do homework (by: tuesday 12pm)
+      [D][X] do homework (by: Jan 1 2025 12:00)
    _________________________________________________________
 
    _________________________________________________________
@@ -80,13 +88,13 @@
    _________________________________________________________
     Here are the tasks you've added:
     1.[T][ ] make lunch
-    2.[D][X] do homework (by: tuesday 12pm)
-    3.[E][ ] project meeting (from: Mon 4pm to: 6pm)
+    2.[D][X] do homework (by: Jan 1 2025 12:00)
+    3.[E][ ] project meeting (from: Jan 1 2025 14:00 to: Jan 1 2025 18:00)
     4.[T][X] buy concert tickets
    _________________________________________________________
 
    _________________________________________________________
-    Invalid unmark command. Try again.
+    Invalid mark command. Try again.
    _________________________________________________________
 
    _________________________________________________________
@@ -95,14 +103,14 @@
 
    _________________________________________________________
     Sure thing, I've marked this task as not done yet:
-      [D][ ] do homework (by: tuesday 12pm)
+      [D][ ] do homework (by: Jan 1 2025 12:00)
    _________________________________________________________
 
    _________________________________________________________
     Here are the tasks you've added:
     1.[T][ ] make lunch
-    2.[D][ ] do homework (by: tuesday 12pm)
-    3.[E][ ] project meeting (from: Mon 4pm to: 6pm)
+    2.[D][ ] do homework (by: Jan 1 2025 12:00)
+    3.[E][ ] project meeting (from: Jan 1 2025 14:00 to: Jan 1 2025 18:00)
     4.[T][X] buy concert tickets
    _________________________________________________________
 
@@ -112,13 +120,13 @@
 
    _________________________________________________________
     Gotchu, I've deleted this task for you:
-      [D][ ] do homework (by: tuesday 12pm)
+      [D][ ] do homework (by: Jan 1 2025 12:00)
    _________________________________________________________
 
    _________________________________________________________
     Here are the tasks you've added:
     1.[T][ ] make lunch
-    2.[E][ ] project meeting (from: Mon 4pm to: 6pm)
+    2.[E][ ] project meeting (from: Jan 1 2025 14:00 to: Jan 1 2025 18:00)
     3.[T][X] buy concert tickets
    _________________________________________________________
 
