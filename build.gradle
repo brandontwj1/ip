@@ -34,8 +34,9 @@ application {
 shadowJar {
     archiveBaseName = "Omni"
     archiveClassifier = null
+    archiveFileName = 'omni.jar'
 }
 
-run{
+run {
     standardInput = System.in
 }
