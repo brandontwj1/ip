@@ -90,7 +90,7 @@ public class Parser {
         handleAddTask(newTodo);
     }
 
-    private void checkValidDateString(String date) throws InvalidArgumentException {
+    boolean checkValidDateString(String date) throws InvalidArgumentException {
         String[] dateAndTime = date.split(" ");
         if (dateAndTime.length > 2) {
             throw new InvalidArgumentException("Invalid date format! Check your date and time is in the form" +
@@ -108,6 +108,7 @@ public class Parser {
             throw new InvalidArgumentException("Invalid date format! Check your date and time is in the form" +
                     " DD-MM-YYYY HHMM");
         }
+        return true;
     }
 
     private void handleDeadline(String arg) throws InvalidArgumentException, IOException {
