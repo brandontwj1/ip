@@ -6,6 +6,8 @@ import Omni.parser.Parser;
 import Omni.tasklist.TaskList;
 import Omni.ui.Ui;
 
+import java.nio.file.Path;
+import java.nio.file.Paths;
 import java.util.Scanner;
 
 public class Omni {
@@ -14,7 +16,7 @@ public class Omni {
     private Ui ui;
     private Parser parser;
 
-    public Omni(String filePath) {
+    public Omni(Path filePath) {
         ui = new Ui();
         storage = new Storage(filePath);
         try {
@@ -42,6 +44,7 @@ public class Omni {
     }
 
     public static void main(String[] args) {
-        new Omni("data/tasks.txt").run();
+        Path dataPath = Paths.get("data", "tasks.txt");
+        new Omni(dataPath).run();
     }
 }

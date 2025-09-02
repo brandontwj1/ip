@@ -19,8 +19,8 @@ import Omni.tasks.Todo;
 public class Storage {
     private Path tasksPath;
 
-    public Storage(String filePath) {
-        this.tasksPath = Paths.get(filePath);
+    public Storage(Path filePath) {
+        this.tasksPath = filePath;
     }
 
     public ArrayList<Task> loadTasks() throws CorruptedFileException {
@@ -65,7 +65,7 @@ public class Storage {
                         tasks.add(new Event(desc, isDone, values[3].trim(), values[4].trim()));
                         break;
                     default:
-                        throw new CorruptedFileException("Omni.tasks.Task type not found.\n" + line);
+                        throw new CorruptedFileException("Task type not found.\n" + line);
                     }
                 }
             }
