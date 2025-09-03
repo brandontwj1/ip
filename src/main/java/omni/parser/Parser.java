@@ -224,14 +224,14 @@ public class Parser {
     /**
      * Deletes a task based on the given task number.
      *
-     * @param n The task number as a string.
+     * @param index The task number as a string.
      * @throws InvalidArgumentException If the task number is invalid or task doesn't exist.
      * @throws IOException If an I/O error occurs during storage update.
      */
-    private void handleDelete(String n) throws InvalidArgumentException, IOException {
+    private void handleDelete(String index) throws InvalidArgumentException, IOException {
         int num;
         try {
-            num = parseInt(n);
+            num = parseInt(index);
         } catch (NumberFormatException e) {
             throw new InvalidArgumentException("Invalid delete command. Try again.");
         }
