@@ -1,4 +1,6 @@
 package omni.ui;
+import java.util.ArrayList;
+
 import omni.tasklist.TaskList;
 import omni.tasks.Task;
 
@@ -82,7 +84,7 @@ public class Ui {
         System.out.print(INDENT + "Here are the tasks you've added:\n");
         for (int i = 0; i < tasks.getSize(); i++) {
             Task t = tasks.getTask(i);
-            System.out.printf(INDENT + "%d.%s\n", i+1, t);
+            System.out.printf(INDENT + "%d.%s\n", i + 1, t);
         }
     }
 
@@ -135,5 +137,24 @@ public class Ui {
                 INDENT + "Gotchu, I've deleted this task for you:\n" +
                         INDENT + "  " + task
         );
+    }
+
+    /**
+     * Displays the matching tasks with a given keyword.
+     *
+     * @param matchingTasks The tasks that contain the given keyword.
+     */
+    public void showMatchingTasks(ArrayList<Task> matchingTasks) {
+        if (matchingTasks.isEmpty()) {
+            System.out.println(
+                    INDENT + "No tasks containing that keyword. Try another one!"
+            );
+        } else {
+            System.out.println("Here are the matching tasks in your list: ");
+            for (int i = 0; i < matchingTasks.size(); i++) {
+                Task t = matchingTasks.get(i);
+                System.out.printf(INDENT + "%d.%s\n", i + 1, t);
+            }
+        }
     }
 }
