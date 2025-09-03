@@ -222,7 +222,7 @@ public class Parser {
     }
 
     /**
-     * Deletes a task based on the given task number.
+     * Deletes a task based on the given task index.
      *
      * @param n The task number as a string.
      * @throws InvalidArgumentException If the task number is invalid or task doesn't exist.
