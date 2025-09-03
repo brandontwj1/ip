@@ -4,6 +4,12 @@ import java.time.LocalDate;
 import java.time.LocalTime;
 import java.time.format.DateTimeFormatter;
 
+/**
+ * Represents an event task with start and end dates and optional times.
+ * Extends the base Task class to include event-specific functionality with duration.
+ *
+ * @author Brandon Tan
+ */
 public class Event extends Task {
     private static final DateTimeFormatter DATE_FORMATTER = DateTimeFormatter.ofPattern("dd-MM-yyyy");
     private final DateTimeFormatter TIME_FORMATTER = DateTimeFormatter.ofPattern("HHmm");
@@ -13,6 +19,14 @@ public class Event extends Task {
     protected LocalDate endDate;
     protected LocalTime endTime;
 
+    /**
+     * Constructs an Event task with the specified description, completion status, start and end times.
+     *
+     * @param description the task description
+     * @param isDone whether the task is completed
+     * @param start the start date and time string in format "dd-MM-yyyy" or "dd-MM-yyyy HHmm"
+     * @param end the end date and time string in format "dd-MM-yyyy" or "dd-MM-yyyy HHmm"
+     */
     public Event(String description, boolean isDone, String start, String end) {
         super(description, isDone);
         String[] startDnT = start.split(" ");
@@ -29,6 +43,11 @@ public class Event extends Task {
         }
     }
 
+    /**
+     * Returns the start date and time as a formatted string.
+     *
+     * @return the start date and time string in the original format
+     */
     public String getStartString() {
         String dnt = this.startDate.format(DATE_FORMATTER);
         if (this.startTime != null) {
@@ -37,6 +56,11 @@ public class Event extends Task {
         return dnt;
     }
 
+    /**
+     * Returns the end date and time as a formatted string.
+     *
+     * @return the end date and time string in the original format
+     */
     public String getEndString() {
         String dnt = this.endDate.format(DATE_FORMATTER);
         if (this.endTime != null) {
@@ -51,7 +75,7 @@ public class Event extends Task {
         return "E | " + this.getDescription() + " | " + done + " | " + getStartString() + " | " + getEndString();
     }
 
-    @Override
+
     public String toString() {
         String startDnt = startDate.format(DateTimeFormatter.ofPattern("MMM d yyyy"));
         if (startTime != null) {

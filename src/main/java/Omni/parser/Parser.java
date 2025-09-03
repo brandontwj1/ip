@@ -19,6 +19,14 @@ import Omni.tasks.Todo;
 import Omni.tasks.Deadline;
 import Omni.tasks.Event;
 
+/**
+ * The Parser class is responsible for parsing and executing user commands in the Omni task management system.
+ * It handles various commands such as adding tasks (todo, deadline, event), marking/unmarking tasks,
+ * deleting tasks, and listing all tasks. The parser validates input formats and coordinates between
+ * the UI, TaskList, and Storage components.
+ *
+ * @author Brandon Tan
+ */
 public class Parser {
     private static final DateTimeFormatter DATE_FORMATTER = DateTimeFormatter.ofPattern("dd-MM-yyyy");
     private static final DateTimeFormatter TIME_FORMATTER = DateTimeFormatter.ofPattern("HHmm");
@@ -27,16 +35,33 @@ public class Parser {
     private TaskList tasks;
     private Storage storage;
 
+    /**
+     * Constructs a Parser with the specified UI, TaskList, and Storage objects.
+     *
+     * @param ui the UI object
+     * @param tasks the TaskList object
+     * @param storage the Storage object
+     */
     public Parser(Ui ui, TaskList tasks, Storage storage) {
         this.ui = ui;
         this.tasks = tasks;
         this.storage = storage;
     }
 
+    /**
+     * Displays the list of all tasks to the user.
+     */
     private void handleList() {
         ui.showTasks(tasks);
     }
 
+    /**
+     * Marks a task as done based on the given task number.
+     *
+     * @param n the task number as a string
+     * @throws InvalidArgumentException if the task number is invalid or task doesn't exist
+     * @throws IOException if an I/O error occurs during storage update
+     */
     private void handleMark(String n) throws InvalidArgumentException, IOException {
         int num;
         try {
@@ -54,6 +79,13 @@ public class Parser {
         }
     }
 
+    /**
+     * Marks a task as not done based on the given task number.
+     *
+     * @param n the task number as a string
+     * @throws InvalidArgumentException if the task number is invalid or task doesn't exist
+     * @throws IOException if an I/O error occurs during storage update
+     */
     private void handleUnmark(String n) throws InvalidArgumentException, IOException {
         int num;
         try {
@@ -71,16 +103,34 @@ public class Parser {
         }
     }
 
-    private void handleUnknownCmd() throws UnknownCommandException, IOException {
+    /**
+     * Handles unknown commands by throwing an exception.
+     *
+     * @throws UnknownCommandException if unknown command received
+     */
+    private void handleUnknownCmd() throws UnknownCommandException {
         throw new UnknownCommandException("I can't lie I have no idea what that means...");
     }
 
+    /**
+     * Adds a task to the task list and storage, then displays confirmation.
+     *
+     * @param task the task to add
+     * @throws IOException if an I/O error occurs during storage write
+     */
     private void handleAddTask(Task task) throws IOException {
         storage.writeTask(task);
         Task t = tasks.addTask(task);
         ui.showAdded(t, tasks);
     }
 
+    /**
+     * Creates and adds a new todo task.
+     *
+     * @param arg the todo description
+     * @throws InvalidArgumentException if the description is empty
+     * @throws IOException if an I/O error occurs during storage write
+     */
     private void handleTodo(String arg) throws InvalidArgumentException, IOException {
         if (arg.isEmpty()) {
             throw new InvalidArgumentException("Give your todo a description!");
@@ -90,6 +140,13 @@ public class Parser {
         handleAddTask(newTodo);
     }
 
+    /**
+     * Checks if the given date string is valid according to the expected format (DD-MM-YYYY HHMM).
+     *
+     * @param date the date string to validate
+     * @return true if the date string is valid
+     * @throws InvalidArgumentException if the date format is invalid
+     */
     boolean checkValidDateString(String date) throws InvalidArgumentException {
         String[] dateAndTime = date.split(" ");
         if (dateAndTime.length > 2) {
@@ -111,6 +168,13 @@ public class Parser {
         return true;
     }
 
+    /**
+     * Creates and adds a new deadline task.
+     *
+     * @param arg the deadline argument containing description and due date
+     * @throws InvalidArgumentException if the format is invalid or description is empty
+     * @throws IOException if an I/O error occurs during storage write
+     */
     private void handleDeadline(String arg) throws InvalidArgumentException, IOException {
         String[] parts = arg.split("/by", 2);
         if (parts.length < 2) {
@@ -127,6 +191,13 @@ public class Parser {
         }
     }
 
+    /**
+     * Creates and adds a new event task.
+     *
+     * @param arg the event argument containing description, start and end times
+     * @throws InvalidArgumentException if the format is invalid or description is empty
+     * @throws IOException if an I/O error occurs during storage write
+     */
     private void handleEvent(String arg) throws InvalidArgumentException, IOException {
         String[] parts = arg.split("/from", 2);
         if (parts.length < 2) {
@@ -150,6 +221,13 @@ public class Parser {
         }
     }
 
+    /**
+     * Deletes a task based on the given task number.
+     *
+     * @param n the task number as a string
+     * @throws InvalidArgumentException if the task number is invalid or task doesn't exist
+     * @throws IOException if an I/O error occurs during storage update
+     */
     private void handleDelete(String n) throws InvalidArgumentException, IOException {
         int num;
         try {
@@ -167,6 +245,12 @@ public class Parser {
         }
     }
 
+    /**
+     * Handles user input and executes the corresponding command.
+     *
+     * @param input the user input string
+     * @return true to continue, false to exit
+     */
     public boolean handleInput(String input) {
         String[] parts = input.split("\\s+", 2);
         String cmd = parts[0];

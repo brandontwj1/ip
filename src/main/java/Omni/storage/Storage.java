@@ -16,13 +16,30 @@ import Omni.tasks.Event;
 import Omni.tasks.Task;
 import Omni.tasks.Todo;
 
+/**
+ * Handles reading from and writing to the task storage file.
+ * Provides methods to load, update, add, and remove tasks from persistent storage.
+ *
+ * @author Brandon Tan
+ */
 public class Storage {
     private Path tasksPath;
 
+    /**
+     * Constructs a Storage object with the specified file path.
+     *
+     * @param filePath the path to the tasks file
+     */
     public Storage(Path filePath) {
         this.tasksPath = filePath;
     }
 
+    /**
+     * Loads tasks from the file and returns them as an ArrayList.
+     *
+     * @return an ArrayList of tasks loaded from the file
+     * @throws CorruptedFileException if the file is corrupted or cannot be read
+     */
     public ArrayList<Task> loadTasks() throws CorruptedFileException {
         if (!Files.exists(tasksPath)) {
             try {
@@ -76,6 +93,13 @@ public class Storage {
         return tasks;
     }
 
+    /**
+     * Rewrites the task at the specified index in the file.
+     *
+     * @param task the task to write
+     * @param index the index of the task to rewrite
+     * @throws IOException if an I/O error occurs
+     */
     public void rewriteTask(Task task, int index) throws IOException {
         List<String> lines = Files.readAllLines(tasksPath);
         lines.remove(index);
@@ -83,10 +107,22 @@ public class Storage {
         Files.write(tasksPath, lines);
     }
 
+    /**
+     * Appends a new task to the file.
+     *
+     * @param task the task to write
+     * @throws IOException if an I/O error occurs
+     */
     public void writeTask(Task task) throws IOException {
         Files.writeString(tasksPath, task.getEntryString() + "\n", StandardOpenOption.APPEND);
     }
 
+    /**
+     * Erases the task at the specified index from the file.
+     *
+     * @param index the index of the task to erase
+     * @throws IOException if an I/O error occurs
+     */
     public void eraseTask(int index) throws IOException {
         List<String> lines = Files.readAllLines(tasksPath);
         lines.remove(index);
