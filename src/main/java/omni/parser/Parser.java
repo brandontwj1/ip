@@ -7,6 +7,7 @@ import java.time.LocalDate;
 import java.time.LocalTime;
 import java.time.format.DateTimeFormatter;
 import java.time.format.DateTimeParseException;
+import java.util.ArrayList;
 
 import omni.exceptions.InvalidArgumentException;
 import omni.exceptions.OmniException;
@@ -246,6 +247,16 @@ public class Parser {
     }
 
     /**
+     * Finds tasks containing the keyword.
+     *
+     * @param keyword The user input keyword.
+     */
+    private void handleFind(String keyword) {
+        ArrayList<Task> matchingTasks = tasks.findMatchingTasks(keyword);
+        ui.showMatchingTasks(matchingTasks);
+    }
+
+    /**
      * Handles user input and executes the corresponding command.
      *
      * @param input The user input string.
@@ -280,6 +291,9 @@ public class Parser {
                 break;
             case "delete":
                 handleDelete(arg);
+                break;
+            case "find":
+                handleFind(arg);
                 break;
             case "bye":
                 continueExecution = false;
