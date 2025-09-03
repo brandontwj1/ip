@@ -1,10 +1,10 @@
-package Omni;
+package omni;
 
-import Omni.exceptions.OmniException;
-import Omni.storage.Storage;
-import Omni.parser.Parser;
-import Omni.tasklist.TaskList;
-import Omni.ui.Ui;
+import omni.exceptions.OmniException;
+import omni.storage.Storage;
+import omni.parser.Parser;
+import omni.tasklist.TaskList;
+import omni.ui.Ui;
 
 import java.nio.file.Path;
 import java.nio.file.Paths;
@@ -27,7 +27,7 @@ public class Omni {
      * Constructs an Omni application with the specified file path for task storage.
      * Initializes all components and loads existing tasks from storage.
      *
-     * @param filePath the path to the tasks storage file
+     * @param filePath The path to the tasks storage file.
      */
     public Omni(Path filePath) {
         ui = new Ui();
@@ -49,11 +49,11 @@ public class Omni {
         ui.greet();
         Scanner sc = new Scanner(System.in);
         String input = sc.nextLine().trim();
-        boolean cont = true;
+        boolean continueExecution = true;
 
-        while (cont) {
-            cont = parser.handleInput(input);
-            if (cont) {
+        while (continueExecution) {
+            continueExecution = parser.handleInput(input);
+            if (continueExecution) {
                 input = sc.nextLine().trim();
             }
         }
@@ -63,10 +63,10 @@ public class Omni {
     /**
      * Main entry point for the Omni application.
      *
-     * @param args command line arguments (not used)
+     * @param args Command line arguments (not used).
      */
     public static void main(String[] args) {
-        Path dataPath = Paths.get("data", "tasks.txt");
-        new Omni(dataPath).run();
+        Path filePath = Paths.get("data", "tasks.txt");
+        new Omni(filePath).run();
     }
 }

@@ -1,8 +1,8 @@
-package Omni.tasklist;
+package omni.tasklist;
 
 import java.util.ArrayList;
 
-import Omni.tasks.Task;
+import omni.tasks.Task;
 
 /**
  * Represents a list of tasks and provides methods to manipulate them.
@@ -17,7 +17,7 @@ public class TaskList {
     /**
      * Constructs a TaskList with the specified list of tasks.
      *
-     * @param tasks the initial list of tasks
+     * @param tasks The initial list of tasks.
      */
     public TaskList(ArrayList<Task> tasks) {
         this.tasks = tasks;
@@ -33,7 +33,7 @@ public class TaskList {
     /**
      * Checks if the task list is empty.
      *
-     * @return true if the task list is empty, false otherwise
+     * @return True if the task list is empty, false otherwise.
      */
     public boolean isEmpty() {
         return tasks.isEmpty();
@@ -42,7 +42,7 @@ public class TaskList {
     /**
      * Returns the number of tasks in the list.
      *
-     * @return the size of the task list
+     * @return The size of the task list.
      */
     public int getSize() {
         return tasks.size();
@@ -51,8 +51,8 @@ public class TaskList {
     /**
      * Returns the task at the specified index.
      *
-     * @param index the index of the task to retrieve
-     * @return the task at the specified index
+     * @param index The index of the task to retrieve.
+     * @return The task at the specified index.
      */
     public Task getTask(int index) {
         return tasks.get(index);
@@ -61,8 +61,8 @@ public class TaskList {
     /**
      * Marks the task at the specified index as done.
      *
-     * @param index the index of the task to mark as done
-     * @return the task that was marked as done
+     * @param index The index of the task to mark as done.
+     * @return The task that was marked as done.
      */
     public Task markTaskDone(int index) {
         Task t = getTask(index);
@@ -73,8 +73,8 @@ public class TaskList {
     /**
      * Marks the task at the specified index as not done.
      *
-     * @param index the index of the task to unmark
-     * @return the task that was unmarked
+     * @param index The index of the task to unmark.
+     * @return The task that was unmarked.
      */
     public Task unmarkTaskDone(int index) {
         Task t = getTask(index);
@@ -85,8 +85,8 @@ public class TaskList {
     /**
      * Adds a task to the list.
      *
-     * @param task the task to add
-     * @return the added task
+     * @param task The task to add.
+     * @return The added task.
      */
     public Task addTask(Task task) {
         tasks.add(task);
@@ -96,8 +96,8 @@ public class TaskList {
     /**
      * Removes the task at the specified index from the list.
      *
-     * @param index the index of the task to remove
-     * @return the removed task
+     * @param index The index of the task to remove.
+     * @return The removed task.
      */
     public Task removeTask(int index) {
         return tasks.remove(index);

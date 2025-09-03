@@ -1,4 +1,4 @@
-package Omni.exceptions;
+package omni.exceptions;
 
 public class UnknownCommandException extends OmniException {
     public UnknownCommandException(String message) {

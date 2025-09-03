@@ -1,6 +1,6 @@
-package Omni.ui;
-import Omni.tasklist.TaskList;
-import Omni.tasks.Task;
+package omni.ui;
+import omni.tasklist.TaskList;
+import omni.tasks.Task;
 
 /**
  * Handles user interface interactions and displays messages to the user.
@@ -54,7 +54,7 @@ public class Ui {
     /**
      * Displays an error message to the user.
      *
-     * @param errorMessage the error message to display
+     * @param errorMessage The error message to display.
      */
     public void showError(String errorMessage) {
         System.out.println(INDENT + errorMessage);
@@ -63,7 +63,7 @@ public class Ui {
     /**
      * Displays a loading error message.
      *
-     * @param errorMessage the loading error message to display
+     * @param errorMessage The loading error message to display.
      */
     public void showLoadingError(String errorMessage) {
         System.out.println("Error creating tasks.txt file: " + errorMessage);
@@ -72,7 +72,7 @@ public class Ui {
     /**
      * Displays the list of tasks to the user.
      *
-     * @param tasks the task list to display
+     * @param tasks The task list to display.
      */
     public void showTasks(TaskList tasks) {
         if (tasks.isEmpty()) {
@@ -89,38 +89,38 @@ public class Ui {
     /**
      * Displays a confirmation message when a task is marked as done.
      *
-     * @param t the task that was marked as done
+     * @param task The task that was marked as done.
      */
-    public void showMarked(Task t) {
+    public void showMarked(Task task) {
         System.out.println(
                 INDENT + "Congrats! I've marked this task as done:\n" +
-                        INDENT + "  " + t
+                        INDENT + "  " + task
         );
     }
 
     /**
      * Displays a confirmation message when a task is unmarked.
      *
-     * @param t the task that was unmarked
+     * @param task The task that was unmarked.
      */
-    public void showUnmarked(Task t) {
+    public void showUnmarked(Task task) {
         System.out.println(
                 INDENT + "Sure thing, I've marked this task as not done yet:\n" +
-                        INDENT + "  " + t
+                        INDENT + "  " + task
         );
     }
 
     /**
      * Displays a confirmation message when a task is added.
      *
-     * @param t the task that was added
-     * @param tasks the updated task list
+     * @param task The task that was added.
+     * @param tasks The updated task list.
      */
-    public void showAdded(Task t, TaskList tasks) {
+    public void showAdded(Task task, TaskList tasks) {
         String taskStr = tasks.getSize() == 1 ? "task" : "tasks";
         System.out.println(
                 INDENT + "Got it. I've added this task:\n" +
-                        INDENT + "  " + t + "\n" +
+                        INDENT + "  " + task + "\n" +
                         INDENT + "Now you have " + tasks.getSize() + " " + taskStr + " in the list."
         );
     }
@@ -128,14 +128,12 @@ public class Ui {
     /**
      * Displays a confirmation message when a task is deleted.
      *
-     * @param t the task that was deleted
+     * @param task The task that was deleted.
      */
-    public void showErased(Task t) {
+    public void showErased(Task task) {
         System.out.println(
                 INDENT + "Gotchu, I've deleted this task for you:\n" +
-                        INDENT + "  " + t
+                        INDENT + "  " + task
         );
     }
-
-
 }

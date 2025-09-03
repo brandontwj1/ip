@@ -1,4 +1,4 @@
-package Omni.tasks;
+package omni.tasks;
 
 /**
  * Represents a simple todo task without any date or time constraints.
@@ -11,8 +11,8 @@ public class Todo extends Task {
     /**
      * Constructs a Todo task with the specified description and completion status.
      *
-     * @param description the task description
-     * @param isDone whether the task is completed
+     * @param description The task description.
+     * @param isDone Whether the task is completed.
      */
     public Todo(String description, boolean isDone) {
         super(description, isDone);

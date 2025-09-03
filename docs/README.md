@@ -1,4 +1,4 @@
-# Omni.Omni User Guide
+# omni.omni User Guide
 
 // Update the title above to match the actual product name
 

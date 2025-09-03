@@ -1,4 +1,4 @@
-package Omni.tasks;
+package omni.tasks;
 
 import java.time.LocalDate;
 import java.time.LocalTime;
@@ -20,9 +20,9 @@ public class Deadline extends Task {
     /**
      * Constructs a Deadline task with the specified description, completion status, and deadline.
      *
-     * @param description the task description
-     * @param isDone whether the task is completed
-     * @param deadline the deadline string in format "dd-MM-yyyy" or "dd-MM-yyyy HHmm"
+     * @param description The task description.
+     * @param isDone Whether the task is completed.
+     * @param deadline The deadline string in format "dd-MM-yyyy" or "dd-MM-yyyy HHmm".
      */
     public Deadline(String description, boolean isDone, String deadline) {
         super(description, isDone);
@@ -37,32 +37,29 @@ public class Deadline extends Task {
     /**
      * Returns the deadline as a formatted string.
      *
-     * @return the deadline string in the original format
+     * @return The deadline string in the original format.
      */
     public String getDeadlineString() {
-        String dnt = this.date.format(DATE_FORMATTER);
+        String dateTimeString = this.date.format(DATE_FORMATTER);
         if (this.time != null) {
-            dnt = dnt + " " + this.time.format(TIME_FORMATTER);
+            dateTimeString = dateTimeString + " " + this.time.format(TIME_FORMATTER);
         }
-        return dnt;
+        return dateTimeString;
     }
-
-
 
     @Override
     public String getEntryString() {
         String done = this.isDone() ? "1" : "0";
-        String dnt = getDeadlineString();
-        return "D | " + this.getDescription() + " | " + done + " | " + dnt;
+        String dateTimeString = getDeadlineString();
+        return "D | " + this.getDescription() + " | " + done + " | " + dateTimeString;
     }
-
 
     @Override
     public String toString() {
-        String dnt = date.format(DateTimeFormatter.ofPattern("MMM d yyyy"));
+        String dateTimeString = date.format(DateTimeFormatter.ofPattern("MMM d yyyy"));
         if (time != null) {
-            dnt = dnt + " " + time.format(DateTimeFormatter.ofPattern("HH:mm"));
+            dateTimeString = dateTimeString + " " + time.format(DateTimeFormatter.ofPattern("HH:mm"));
         }
-        return "[D]" + super.toString() + " (by: " + dnt + ")";
+        return "[D]" + super.toString() + " (by: " + dateTimeString + ")";
     }
 }

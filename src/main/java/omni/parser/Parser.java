@@ -1,4 +1,4 @@
-package Omni.parser;
+package omni.parser;
 
 import static java.lang.Integer.parseInt;
 
@@ -8,16 +8,16 @@ import java.time.LocalTime;
 import java.time.format.DateTimeFormatter;
 import java.time.format.DateTimeParseException;
 
-import Omni.exceptions.InvalidArgumentException;
-import Omni.exceptions.OmniException;
-import Omni.exceptions.UnknownCommandException;
-import Omni.ui.Ui;
-import Omni.tasklist.TaskList;
-import Omni.storage.Storage;
-import Omni.tasks.Task;
-import Omni.tasks.Todo;
-import Omni.tasks.Deadline;
-import Omni.tasks.Event;
+import omni.exceptions.InvalidArgumentException;
+import omni.exceptions.OmniException;
+import omni.exceptions.UnknownCommandException;
+import omni.ui.Ui;
+import omni.tasklist.TaskList;
+import omni.storage.Storage;
+import omni.tasks.Task;
+import omni.tasks.Todo;
+import omni.tasks.Deadline;
+import omni.tasks.Event;
 
 /**
  * The Parser class is responsible for parsing and executing user commands in the Omni task management system.
@@ -38,9 +38,9 @@ public class Parser {
     /**
      * Constructs a Parser with the specified UI, TaskList, and Storage objects.
      *
-     * @param ui the UI object
-     * @param tasks the TaskList object
-     * @param storage the Storage object
+     * @param ui The UI object.
+     * @param tasks The TaskList object.
+     * @param storage The Storage object.
      */
     public Parser(Ui ui, TaskList tasks, Storage storage) {
         this.ui = ui;
@@ -58,9 +58,9 @@ public class Parser {
     /**
      * Marks a task as done based on the given task number.
      *
-     * @param n the task number as a string
-     * @throws InvalidArgumentException if the task number is invalid or task doesn't exist
-     * @throws IOException if an I/O error occurs during storage update
+     * @param n The task number as a string.
+     * @throws InvalidArgumentException If the task number is invalid or task doesn't exist.
+     * @throws IOException If an I/O error occurs during storage update.
      */
     private void handleMark(String n) throws InvalidArgumentException, IOException {
         int num;
@@ -82,9 +82,9 @@ public class Parser {
     /**
      * Marks a task as not done based on the given task number.
      *
-     * @param n the task number as a string
-     * @throws InvalidArgumentException if the task number is invalid or task doesn't exist
-     * @throws IOException if an I/O error occurs during storage update
+     * @param n The task number as a string.
+     * @throws InvalidArgumentException If the task number is invalid or task doesn't exist.
+     * @throws IOException If an I/O error occurs during storage update.
      */
     private void handleUnmark(String n) throws InvalidArgumentException, IOException {
         int num;
@@ -106,7 +106,7 @@ public class Parser {
     /**
      * Handles unknown commands by throwing an exception.
      *
-     * @throws UnknownCommandException if unknown command received
+     * @throws UnknownCommandException If unknown command received.
      */
     private void handleUnknownCmd() throws UnknownCommandException {
         throw new UnknownCommandException("I can't lie I have no idea what that means...");
@@ -115,8 +115,8 @@ public class Parser {
     /**
      * Adds a task to the task list and storage, then displays confirmation.
      *
-     * @param task the task to add
-     * @throws IOException if an I/O error occurs during storage write
+     * @param task The task to add.
+     * @throws IOException If an I/O error occurs during storage write.
      */
     private void handleAddTask(Task task) throws IOException {
         storage.writeTask(task);
@@ -127,9 +127,9 @@ public class Parser {
     /**
      * Creates and adds a new todo task.
      *
-     * @param arg the todo description
-     * @throws InvalidArgumentException if the description is empty
-     * @throws IOException if an I/O error occurs during storage write
+     * @param arg The todo description.
+     * @throws InvalidArgumentException If the description is empty.
+     * @throws IOException If an I/O error occurs during storage write.
      */
     private void handleTodo(String arg) throws InvalidArgumentException, IOException {
         if (arg.isEmpty()) {
@@ -143,15 +143,15 @@ public class Parser {
     /**
      * Checks if the given date string is valid according to the expected format (DD-MM-YYYY HHMM).
      *
-     * @param date the date string to validate
-     * @return true if the date string is valid
-     * @throws InvalidArgumentException if the date format is invalid
+     * @param date The date string to validate.
+     * @return True if the date string is valid.
+     * @throws InvalidArgumentException If the date format is invalid.
      */
     boolean checkValidDateString(String date) throws InvalidArgumentException {
         String[] dateAndTime = date.split(" ");
         if (dateAndTime.length > 2) {
-            throw new InvalidArgumentException("Invalid date format! Check your date and time is in the form" +
-                    " DD-MM-YYYY HHMM");
+            throw new InvalidArgumentException("Invalid date format! Check your date and time is in the form"
+                    + " DD-MM-YYYY HHMM");
         }
         LocalDate d;
         LocalTime t;
@@ -162,8 +162,8 @@ public class Parser {
                 t = LocalTime.parse(dateAndTime[1].trim(), TIME_FORMATTER);
             }
         } catch (DateTimeParseException e) {
-            throw new InvalidArgumentException("Invalid date format! Check your date and time is in the form" +
-                    " DD-MM-YYYY HHMM");
+            throw new InvalidArgumentException("Invalid date format! Check your date and time is in the form"
+                    + " DD-MM-YYYY HHMM");
         }
         return true;
     }
@@ -171,9 +171,9 @@ public class Parser {
     /**
      * Creates and adds a new deadline task.
      *
-     * @param arg the deadline argument containing description and due date
-     * @throws InvalidArgumentException if the format is invalid or description is empty
-     * @throws IOException if an I/O error occurs during storage write
+     * @param arg The deadline argument containing description and due date.
+     * @throws InvalidArgumentException If the format is invalid or description is empty.
+     * @throws IOException If an I/O error occurs during storage write.
      */
     private void handleDeadline(String arg) throws InvalidArgumentException, IOException {
         String[] parts = arg.split("/by", 2);
@@ -194,9 +194,9 @@ public class Parser {
     /**
      * Creates and adds a new event task.
      *
-     * @param arg the event argument containing description, start and end times
-     * @throws InvalidArgumentException if the format is invalid or description is empty
-     * @throws IOException if an I/O error occurs during storage write
+     * @param arg The event argument containing description, start and end times.
+     * @throws InvalidArgumentException If the format is invalid or description is empty.
+     * @throws IOException If an I/O error occurs during storage write.
      */
     private void handleEvent(String arg) throws InvalidArgumentException, IOException {
         String[] parts = arg.split("/from", 2);
@@ -224,9 +224,9 @@ public class Parser {
     /**
      * Deletes a task based on the given task number.
      *
-     * @param n the task number as a string
-     * @throws InvalidArgumentException if the task number is invalid or task doesn't exist
-     * @throws IOException if an I/O error occurs during storage update
+     * @param n The task number as a string.
+     * @throws InvalidArgumentException If the task number is invalid or task doesn't exist.
+     * @throws IOException If an I/O error occurs during storage update.
      */
     private void handleDelete(String n) throws InvalidArgumentException, IOException {
         int num;
@@ -248,15 +248,15 @@ public class Parser {
     /**
      * Handles user input and executes the corresponding command.
      *
-     * @param input the user input string
-     * @return true to continue, false to exit
+     * @param input The user input string.
+     * @return True to continue, false to exit.
      */
     public boolean handleInput(String input) {
         String[] parts = input.split("\\s+", 2);
         String cmd = parts[0];
         String arg = parts.length > 1 ? parts[1] : "";
 
-        boolean cont = true;
+        boolean continueExecution = true;
         ui.startReply();
         try {
             switch (cmd.toLowerCase()) {
@@ -282,7 +282,7 @@ public class Parser {
                 handleDelete(arg);
                 break;
             case "bye":
-                cont = false;
+                continueExecution = false;
                 ui.exit();
                 break;
             default:
@@ -294,6 +294,6 @@ public class Parser {
             ui.showError(e.getMessage());
         }
         ui.endReply();
-        return cont;
+        return continueExecution;
     }
 }

@@ -1,4 +1,4 @@
-package Omni.tasks;
+package omni.tasks;
 
 /**
  * Represents a task with a description and completion status.
@@ -13,8 +13,8 @@ public class Task {
     /**
      * Constructs a Task with the specified description and completion status.
      *
-     * @param description the task description
-     * @param isDone whether the task is completed
+     * @param description The task description.
+     * @param isDone Whether the task is completed.
      */
     public Task(String description, boolean isDone) {
         this.description = description;
@@ -38,7 +38,7 @@ public class Task {
     /**
      * Returns the completion status of the task.
      *
-     * @return true if the task is done, false otherwise
+     * @return True if the task is done, false otherwise.
      */
     public boolean isDone() {
         return this.isDone;
@@ -47,7 +47,7 @@ public class Task {
     /**
      * Returns the status icon representing the completion status of the task.
      *
-     * @return "X" if the task is done, " " otherwise
+     * @return "X" if the task is done, " " otherwise.
      */
     public String getStatusIcon() {
         return (this.isDone ? "X" : " ");
@@ -56,7 +56,7 @@ public class Task {
     /**
      * Returns the description of the task.
      *
-     * @return the task description
+     * @return The task description.
      */
     public String getDescription() {
         return this.description;
@@ -65,7 +65,7 @@ public class Task {
     /**
      * Returns the entry string representation for file storage.
      *
-     * @return the formatted string for saving to file
+     * @return The formatted string for saving to file.
      */
     public String getEntryString() {
         String done = this.isDone() ? "1" : "0";

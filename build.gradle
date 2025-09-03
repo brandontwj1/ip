@@ -28,11 +28,11 @@ test {
 }
 
 application {
-    mainClass.set("Omni.Omni")
+    mainClass.set("omni.Omni")
 }
 
 shadowJar {
-    archiveBaseName = "Omni"
+    archiveBaseName = "omni"
     archiveClassifier = null
     archiveFileName = 'omni.jar'
 }

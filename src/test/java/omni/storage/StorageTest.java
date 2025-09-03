@@ -1,4 +1,4 @@
-package Omni.storage;
+package omni.storage;
 
 import org.junit.jupiter.api.Test;
 
@@ -10,16 +10,16 @@ import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.util.ArrayList;
 
-import Omni.exceptions.CorruptedFileException;
-import Omni.tasks.Deadline;
-import Omni.tasks.Event;
-import Omni.tasks.Task;
-import Omni.tasks.Todo;
+import omni.exceptions.CorruptedFileException;
+import omni.tasks.Deadline;
+import omni.tasks.Event;
+import omni.tasks.Task;
+import omni.tasks.Todo;
 
 public class StorageTest {
     @Test
     public void loadTasks_regular_success() throws Exception {
-        Path path = Paths.get("src", "test", "java", "Omni", "storage", "loadTasksTest.txt");
+        Path path = Paths.get("src", "test", "java", "omni", "storage", "loadTasksTest.txt");
         ArrayList<Task> tasks = new ArrayList<>();
         tasks.add(new Todo("todo", true));
         tasks.add(new Deadline("deadline", false, "01-01-2025"));
@@ -29,7 +29,7 @@ public class StorageTest {
 
     @Test
     public void loadTasks_incorrectType_exceptionThrown() throws Exception {
-        Path path = Paths.get("src", "test", "java", "Omni", "storage", "incorrectTypeTest.txt");
+        Path path = Paths.get("src", "test", "java", "omni", "storage", "incorrectTypeTest.txt");
 
         CorruptedFileException exception = assertThrows(CorruptedFileException.class, () -> {
             new Storage(path).loadTasks();
@@ -40,25 +40,25 @@ public class StorageTest {
 
     @Test
     public void loadTasks_incorrectLength_exceptionThrown() throws Exception {
-        Path path1 = Paths.get("src", "test", "java", "Omni", "storage", "incorrectLengthTest.txt");
+        Path path1 = Paths.get("src", "test", "java", "omni", "storage", "incorrectLengthTest.txt");
         CorruptedFileException exception1 = assertThrows(CorruptedFileException.class, () -> {
             new Storage(path1).loadTasks();
         });
         assertTrue(exception1.getMessage().contains("Entry length invalid."));
 
-        Path path2 = Paths.get("src", "test", "java", "Omni", "storage", "incorrectTodoLengthTest.txt");
+        Path path2 = Paths.get("src", "test", "java", "omni", "storage", "incorrectTodoLengthTest.txt");
         CorruptedFileException exception2 = assertThrows(CorruptedFileException.class, () -> {
             new Storage(path2).loadTasks();
         });
         assertTrue(exception2.getMessage().contains("Entry length for todo invalid."));
 
-        Path path3 = Paths.get("src", "test", "java", "Omni", "storage", "incorrectDeadlineLengthTest.txt");
+        Path path3 = Paths.get("src", "test", "java", "omni", "storage", "incorrectDeadlineLengthTest.txt");
         CorruptedFileException exception3 = assertThrows(CorruptedFileException.class, () -> {
             new Storage(path3).loadTasks();
         });
         assertTrue(exception3.getMessage().contains("Entry length for deadline invalid."));
 
-        Path path4 = Paths.get("src", "test", "java", "Omni", "storage", "incorrectEventLengthTest.txt");
+        Path path4 = Paths.get("src", "test", "java", "omni", "storage", "incorrectEventLengthTest.txt");
         CorruptedFileException exception4 = assertThrows(CorruptedFileException.class, () -> {
             new Storage(path4).loadTasks();
         });

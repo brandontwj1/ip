@@ -1,4 +1,4 @@
-package Omni.parser;
+package omni.parser;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertThrows;
@@ -9,11 +9,11 @@ import java.nio.file.Paths;
 
 import org.junit.jupiter.api.Test;
 
-import Omni.exceptions.InvalidArgumentException;
-import Omni.exceptions.OmniException;
-import Omni.storage.Storage;
-import Omni.tasklist.TaskList;
-import Omni.ui.Ui;
+import omni.exceptions.InvalidArgumentException;
+import omni.exceptions.OmniException;
+import omni.storage.Storage;
+import omni.tasklist.TaskList;
+import omni.ui.Ui;
 
 public class ParserTest {
 
