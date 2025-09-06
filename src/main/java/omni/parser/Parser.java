@@ -12,13 +12,13 @@ import java.util.ArrayList;
 import omni.exceptions.InvalidArgumentException;
 import omni.exceptions.OmniException;
 import omni.exceptions.UnknownCommandException;
-import omni.ui.Ui;
-import omni.tasklist.TaskList;
 import omni.storage.Storage;
-import omni.tasks.Task;
-import omni.tasks.Todo;
+import omni.tasklist.TaskList;
 import omni.tasks.Deadline;
 import omni.tasks.Event;
+import omni.tasks.Task;
+import omni.tasks.Todo;
+import omni.ui.Ui;
 
 /**
  * The Parser class is responsible for parsing and executing user commands in the Omni task management system.
@@ -39,8 +39,8 @@ public class Parser {
     /**
      * Constructs a Parser with the specified UI, TaskList, and Storage objects.
      *
-     * @param ui The UI object.
-     * @param tasks The TaskList object.
+     * @param ui      The UI object.
+     * @param tasks   The TaskList object.
      * @param storage The Storage object.
      */
     public Parser(Ui ui, TaskList tasks, Storage storage) {
@@ -61,7 +61,7 @@ public class Parser {
      *
      * @param n The task number as a string.
      * @throws InvalidArgumentException If the task number is invalid or task doesn't exist.
-     * @throws IOException If an I/O error occurs during storage update.
+     * @throws IOException              If an I/O error occurs during storage update.
      */
     private void handleMark(String n) throws InvalidArgumentException, IOException {
         int num;
@@ -85,7 +85,7 @@ public class Parser {
      *
      * @param n The task number as a string.
      * @throws InvalidArgumentException If the task number is invalid or task doesn't exist.
-     * @throws IOException If an I/O error occurs during storage update.
+     * @throws IOException              If an I/O error occurs during storage update.
      */
     private void handleUnmark(String n) throws InvalidArgumentException, IOException {
         int num;
@@ -130,7 +130,7 @@ public class Parser {
      *
      * @param arg The todo description.
      * @throws InvalidArgumentException If the description is empty.
-     * @throws IOException If an I/O error occurs during storage write.
+     * @throws IOException              If an I/O error occurs during storage write.
      */
     private void handleTodo(String arg) throws InvalidArgumentException, IOException {
         if (arg.isEmpty()) {
@@ -174,7 +174,7 @@ public class Parser {
      *
      * @param arg The deadline argument containing description and due date.
      * @throws InvalidArgumentException If the format is invalid or description is empty.
-     * @throws IOException If an I/O error occurs during storage write.
+     * @throws IOException              If an I/O error occurs during storage write.
      */
     private void handleDeadline(String arg) throws InvalidArgumentException, IOException {
         String[] parts = arg.split("/by", 2);
@@ -197,12 +197,13 @@ public class Parser {
      *
      * @param arg The event argument containing description, start and end times.
      * @throws InvalidArgumentException If the format is invalid or description is empty.
-     * @throws IOException If an I/O error occurs during storage write.
+     * @throws IOException              If an I/O error occurs during storage write.
      */
     private void handleEvent(String arg) throws InvalidArgumentException, IOException {
         String[] parts = arg.split("/from", 2);
         if (parts.length < 2) {
-            throw new InvalidArgumentException("Unable to set Omni.tasks.Event, remember to use /from and /to in that order!");
+            throw new InvalidArgumentException("Unable to set Omni.tasks.Event, "
+                    + "remember to use /from and /to in that order!");
         } else {
             String description = parts[0].trim();
             if (description.isEmpty()) {
@@ -227,7 +228,7 @@ public class Parser {
      *
      * @param index The task number as a string.
      * @throws InvalidArgumentException If the task number is invalid or task doesn't exist.
-     * @throws IOException If an I/O error occurs during storage update.
+     * @throws IOException              If an I/O error occurs during storage update.
      */
     private void handleDelete(String index) throws InvalidArgumentException, IOException {
         int num;
