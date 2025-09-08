@@ -66,6 +66,10 @@ public class Omni {
         return parser.handleInput(input);
     }
 
+    public String greet() {
+        return ui.greet();
+    }
+
     /*
     public static void main(String[] args) {
         Path filePath = Paths.get("data", "tasks.txt");

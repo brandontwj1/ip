@@ -50,7 +50,8 @@ public class MainWindow extends AnchorPane {
         );
         userInput.clear();
     }
-    // follow this getChildren add all to put in dialog for user starting
 
-    //don't need to run, duke object can just have get reponse?
+    public void setGreeting() {
+        dialogContainer.getChildren().addAll(DialogBox.getOmniDialog(omni.greet(), omniImage));
+    }
 }
