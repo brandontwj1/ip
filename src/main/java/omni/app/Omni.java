@@ -1,4 +1,4 @@
-package omni;
+package omni.app;
 
 import omni.exceptions.OmniException;
 import omni.storage.Storage;
@@ -58,6 +58,10 @@ public class Omni {
             }
         }
         sc.close();
+    }
+
+    public String getResponse(String input) {
+        return parser.handleInput(input);
     }
 
     /**
