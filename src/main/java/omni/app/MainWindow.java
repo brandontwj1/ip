@@ -49,6 +49,11 @@ public class MainWindow extends AnchorPane {
                 DialogBox.getOmniDialog(response, omniImage)
         );
         userInput.clear();
+        if (input.equalsIgnoreCase("bye")) {
+            PauseTransition pause = new PauseTransition(Duration.seconds(1));
+            pause.setOnFinished(event -> Platform.exit());
+            pause.play();
+        }
     }
 
     public void setGreeting() {
