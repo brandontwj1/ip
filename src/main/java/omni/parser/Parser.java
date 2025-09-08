@@ -52,18 +52,19 @@ public class Parser {
     /**
      * Displays the list of all tasks to the user.
      */
-    private void handleList() {
-        ui.showTasks(tasks);
+    private String handleList() {
+        return ui.showTasks(tasks);
     }
 
     /**
      * Marks a task as done based on the given task number.
      *
      * @param n The task number as a string.
+     * @return Reply string for the user.
      * @throws InvalidArgumentException If the task number is invalid or task doesn't exist.
      * @throws IOException              If an I/O error occurs during storage update.
      */
-    private void handleMark(String n) throws InvalidArgumentException, IOException {
+    private String handleMark(String n) throws InvalidArgumentException, IOException {
         int num;
         try {
             num = parseInt(n);
@@ -76,7 +77,7 @@ public class Parser {
         } else {
             Task t = tasks.markTaskDone(num - 1);
             storage.rewriteTask(t, num - 1);
-            ui.showMarked(t);
+            return ui.showMarked(t);
         }
     }
 
@@ -87,7 +88,7 @@ public class Parser {
      * @throws InvalidArgumentException If the task number is invalid or task doesn't exist.
      * @throws IOException              If an I/O error occurs during storage update.
      */
-    private void handleUnmark(String n) throws InvalidArgumentException, IOException {
+    private String handleUnmark(String n) throws InvalidArgumentException, IOException {
         int num;
         try {
             num = parseInt(n);
@@ -100,7 +101,7 @@ public class Parser {
         } else {
             Task t = tasks.unmarkTaskDone(num - 1);
             storage.rewriteTask(t, num - 1);
-            ui.showUnmarked(t);
+            return ui.showUnmarked(t);
         }
     }
 
@@ -119,10 +120,10 @@ public class Parser {
      * @param task The task to add.
      * @throws IOException If an I/O error occurs during storage write.
      */
-    private void handleAddTask(Task task) throws IOException {
+    private String handleAddTask(Task task) throws IOException {
         storage.writeTask(task);
         Task t = tasks.addTask(task);
-        ui.showAdded(t, tasks);
+        return ui.showAdded(t, tasks);
     }
 
     /**
@@ -132,13 +133,13 @@ public class Parser {
      * @throws InvalidArgumentException If the description is empty.
      * @throws IOException              If an I/O error occurs during storage write.
      */
-    private void handleTodo(String arg) throws InvalidArgumentException, IOException {
+    private String handleTodo(String arg) throws InvalidArgumentException, IOException {
         if (arg.isEmpty()) {
             throw new InvalidArgumentException("Give your todo a description!");
         }
 
         Todo newTodo = new Todo(arg, false);
-        handleAddTask(newTodo);
+        return handleAddTask(newTodo);
     }
 
     /**
@@ -176,7 +177,7 @@ public class Parser {
      * @throws InvalidArgumentException If the format is invalid or description is empty.
      * @throws IOException              If an I/O error occurs during storage write.
      */
-    private void handleDeadline(String arg) throws InvalidArgumentException, IOException {
+    private String handleDeadline(String arg) throws InvalidArgumentException, IOException {
         String[] parts = arg.split("/by", 2);
         if (parts.length < 2) {
             throw new InvalidArgumentException("Unable to set deadline, remember to use /by to specify your deadline!");
@@ -188,7 +189,7 @@ public class Parser {
             String date = parts[1].trim();
             checkValidDateString(date);
             Deadline newDeadline = new Deadline(description, false, date);
-            handleAddTask(newDeadline);
+            return handleAddTask(newDeadline);
         }
     }
 
@@ -199,10 +200,10 @@ public class Parser {
      * @throws InvalidArgumentException If the format is invalid or description is empty.
      * @throws IOException              If an I/O error occurs during storage write.
      */
-    private void handleEvent(String arg) throws InvalidArgumentException, IOException {
+    private String handleEvent(String arg) throws InvalidArgumentException, IOException {
         String[] parts = arg.split("/from", 2);
         if (parts.length < 2) {
-            throw new InvalidArgumentException("Unable to set Omni.tasks.Event, "
+            throw new InvalidArgumentException("Unable to set event, "
                     + "remember to use /from and /to in that order!");
         } else {
             String description = parts[0].trim();
@@ -218,7 +219,7 @@ public class Parser {
                 checkValidDateString(from);
                 checkValidDateString(to);
                 Event newEvent = new Event(description, false, from, to);
-                handleAddTask(newEvent);
+                return handleAddTask(newEvent);
             }
         }
     }
@@ -230,7 +231,7 @@ public class Parser {
      * @throws InvalidArgumentException If the task number is invalid or task doesn't exist.
      * @throws IOException              If an I/O error occurs during storage update.
      */
-    private void handleDelete(String index) throws InvalidArgumentException, IOException {
+    private String handleDelete(String index) throws InvalidArgumentException, IOException {
         int num;
         try {
             num = parseInt(index);
@@ -243,7 +244,7 @@ public class Parser {
         } else {
             Task removedTask = tasks.removeTask(num - 1);
             storage.eraseTask(num - 1);
-            ui.showErased(removedTask);
+            return ui.showErased(removedTask);
         }
     }
 
@@ -252,63 +253,62 @@ public class Parser {
      *
      * @param keyword The user input keyword.
      */
-    private void handleFind(String keyword) {
+    private String handleFind(String keyword) {
         ArrayList<Task> matchingTasks = tasks.findMatchingTasks(keyword);
-        ui.showMatchingTasks(matchingTasks);
+        return ui.showMatchingTasks(matchingTasks);
     }
 
     /**
      * Handles user input and executes the corresponding command.
      *
      * @param input The user input string.
-     * @return True to continue, false to exit.
+     * @return Output string reply.
      */
-    public boolean handleInput(String input) {
+    public String handleInput(String input) {
         String[] parts = input.split("\\s+", 2);
         String cmd = parts[0];
         String arg = parts.length > 1 ? parts[1] : "";
+        String reply = "";
 
         boolean continueExecution = true;
-        ui.startReply();
         try {
             switch (cmd.toLowerCase()) {
             case "list":
-                handleList();
+                reply = handleList();
                 break;
             case "mark":
-                handleMark(arg);
+                reply = handleMark(arg);
                 break;
             case "unmark":
-                handleUnmark(arg);
+                reply = handleUnmark(arg);
                 break;
             case "todo":
-                handleTodo(arg);
+                reply = handleTodo(arg);
                 break;
             case "deadline":
-                handleDeadline(arg);
+                reply = handleDeadline(arg);
                 break;
             case "event":
-                handleEvent(arg);
+                reply = handleEvent(arg);
                 break;
             case "delete":
-                handleDelete(arg);
+                reply = handleDelete(arg);
                 break;
             case "find":
-                handleFind(arg);
+                reply = handleFind(arg);
                 break;
             case "bye":
                 continueExecution = false;
-                ui.exit();
+                reply = ui.exit();
                 break;
             default:
                 handleUnknownCmd();
             }
         } catch (OmniException e) {
-            ui.showError(e.getUserMessage());
+            reply = e.getUserMessage();
         } catch (IOException e) {
-            ui.showError(e.getMessage());
+            reply = e.getMessage();
         }
-        ui.endReply();
-        return continueExecution;
+        return reply;
     }
 }

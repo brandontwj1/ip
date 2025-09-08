@@ -45,6 +45,7 @@ public class Omni {
      * Starts the main application loop that handles user input and commands.
      * Continues running until the user enters the exit command "bye".
      */
+    /*
     public void run() {
         ui.greet();
         Scanner sc = new Scanner(System.in);
@@ -59,18 +60,16 @@ public class Omni {
         }
         sc.close();
     }
+    */
 
     public String getResponse(String input) {
         return parser.handleInput(input);
     }
 
-    /**
-     * Main entry point for the Omni application.
-     *
-     * @param args Command line arguments (not used).
-     */
+    /*
     public static void main(String[] args) {
         Path filePath = Paths.get("data", "tasks.txt");
         new Omni(filePath).run();
     }
+    */
 }
