@@ -36,21 +36,21 @@ public class Ui {
 
     /**
      * Displays a greeting message to the user.
+     *
+     * @return The greeting message string.
      */
-    public void greet() {
-        System.out.println(
-                HORIZONTAL_LINE
-                        + INDENT + "Helloo! I'm Omni!\n"
-                        + INDENT + "What can I do for you?\n"
-                        + HORIZONTAL_LINE
-        );
+    public String greet() {
+        return "Helloo! I'm Omni!\n"
+                + "What can I do for you?\n";
     }
 
     /**
      * Displays an exit message to the user.
+     *
+     * @return The exit message string.
      */
-    public void exit() {
-        System.out.println(INDENT + "Byeee! See you in a bit!");
+    public String exit() {
+        return "Byeee! See you in a bit!";
     }
 
     /**
@@ -75,41 +75,41 @@ public class Ui {
      * Displays the list of tasks to the user.
      *
      * @param tasks The task list to display.
+     * @return String representation of the task list.
      */
-    public void showTasks(TaskList tasks) {
+    public String showTasks(TaskList tasks) {
         if (tasks.isEmpty()) {
-            System.out.println(INDENT + "You have no tasks... Add one!");
-            return;
+            return "You have no tasks... Add one!";
         }
         System.out.print(INDENT + "Here are the tasks you've added:\n");
+        StringBuilder reply = new StringBuilder("Here are the tasks you've added:\n");
         for (int i = 0; i < tasks.getSize(); i++) {
             Task t = tasks.getTask(i);
-            System.out.printf(INDENT + "%d.%s\n", i + 1, t);
+            reply.append(String.format("    %d.%s\n", i + 1, t));
         }
+        return reply.toString();
     }
 
     /**
-     * Displays a confirmation message when a task is marked as done.
+     * Returns a confirmation message when a task is marked as done.
      *
      * @param task The task that was marked as done.
+     * @return Confirmation message string.
      */
-    public void showMarked(Task task) {
-        System.out.println(
-                INDENT + "Congrats! I've marked this task as done:\n" +
-                        INDENT + "  " + task
-        );
+    public String showMarked(Task task) {
+        return "Congrats! I've marked this task as done:\n"
+                + "  " + task;
     }
 
     /**
      * Displays a confirmation message when a task is unmarked.
      *
      * @param task The task that was unmarked.
+     * @return Confirmation message string.
      */
-    public void showUnmarked(Task task) {
-        System.out.println(
-                INDENT + "Sure thing, I've marked this task as not done yet:\n" +
-                        INDENT + "  " + task
-        );
+    public String showUnmarked(Task task) {
+        return "Sure thing, I've marked this task as not done yet:\n"
+                + "  " + task;
     }
 
     /**
@@ -117,44 +117,42 @@ public class Ui {
      *
      * @param task The task that was added.
      * @param tasks The updated task list.
+     * @return Confirmation message string with task count.
      */
-    public void showAdded(Task task, TaskList tasks) {
+    public String showAdded(Task task, TaskList tasks) {
         String taskStr = tasks.getSize() == 1 ? "task" : "tasks";
-        System.out.println(
-                INDENT + "Got it. I've added this task:\n" +
-                        INDENT + "  " + task + "\n" +
-                        INDENT + "Now you have " + tasks.getSize() + " " + taskStr + " in the list."
-        );
+        return "Got it. I've added this task:\n"
+                + "  " + task + "\n"
+                + "Now you have " + tasks.getSize() + " " + taskStr + " in the list.";
     }
 
     /**
      * Displays a confirmation message when a task is deleted.
      *
      * @param task The task that was deleted.
+     * @return Confirmation message string.
      */
-    public void showErased(Task task) {
-        System.out.println(
-                INDENT + "Gotchu, I've deleted this task for you:\n" +
-                        INDENT + "  " + task
-        );
+    public String showErased(Task task) {
+        return "Gotchu, I've deleted this task for you:\n"
+                + "  " + task;
     }
 
     /**
      * Displays the matching tasks with a given keyword.
      *
      * @param matchingTasks The tasks that contain the given keyword.
+     * @return String representation of matching tasks or message if none found.
      */
-    public void showMatchingTasks(ArrayList<Task> matchingTasks) {
+    public String showMatchingTasks(ArrayList<Task> matchingTasks) {
         if (matchingTasks.isEmpty()) {
-            System.out.println(
-                    INDENT + "No tasks containing that keyword. Try another one!"
-            );
+            return "No tasks containing that keyword. Try another one!";
         } else {
-            System.out.println("Here are the matching tasks in your list: ");
+            StringBuilder reply = new StringBuilder("Here are the matching tasks in your list:\n");
             for (int i = 0; i < matchingTasks.size(); i++) {
                 Task t = matchingTasks.get(i);
-                System.out.printf(INDENT + "%d.%s\n", i + 1, t);
+                reply.append(String.format("    %d.%s\n", i + 1, t));
             }
+            return reply.toString();
         }
     }
 }
