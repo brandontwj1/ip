@@ -36,6 +36,8 @@ public class Ui {
 
     /**
      * Displays a greeting message to the user.
+     *
+     * @return The greeting message string.
      */
     public String greet() {
         return "Helloo! I'm Omni!\n"
@@ -44,6 +46,8 @@ public class Ui {
 
     /**
      * Displays an exit message to the user.
+     *
+     * @return The exit message string.
      */
     public String exit() {
         return "Byeee! See you in a bit!";
@@ -71,7 +75,7 @@ public class Ui {
      * Displays the list of tasks to the user.
      *
      * @param tasks The task list to display.
-     * @return String list of tasks.
+     * @return String representation of the task list.
      */
     public String showTasks(TaskList tasks) {
         if (tasks.isEmpty()) {
@@ -101,6 +105,7 @@ public class Ui {
      * Displays a confirmation message when a task is unmarked.
      *
      * @param task The task that was unmarked.
+     * @return Confirmation message string.
      */
     public String showUnmarked(Task task) {
         return "Sure thing, I've marked this task as not done yet:\n"
@@ -112,6 +117,7 @@ public class Ui {
      *
      * @param task The task that was added.
      * @param tasks The updated task list.
+     * @return Confirmation message string with task count.
      */
     public String showAdded(Task task, TaskList tasks) {
         String taskStr = tasks.getSize() == 1 ? "task" : "tasks";
@@ -124,6 +130,7 @@ public class Ui {
      * Displays a confirmation message when a task is deleted.
      *
      * @param task The task that was deleted.
+     * @return Confirmation message string.
      */
     public String showErased(Task task) {
         return "Gotchu, I've deleted this task for you:\n"
@@ -134,6 +141,7 @@ public class Ui {
      * Displays the matching tasks with a given keyword.
      *
      * @param matchingTasks The tasks that contain the given keyword.
+     * @return String representation of matching tasks or message if none found.
      */
     public String showMatchingTasks(ArrayList<Task> matchingTasks) {
         if (matchingTasks.isEmpty()) {

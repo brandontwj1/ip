@@ -1,19 +1,17 @@
 package omni.app;
 
+import java.nio.file.Path;
+
 import omni.exceptions.OmniException;
-import omni.storage.Storage;
 import omni.parser.Parser;
+import omni.storage.Storage;
 import omni.tasklist.TaskList;
 import omni.ui.Ui;
-
-import java.nio.file.Path;
-import java.nio.file.Paths;
-import java.util.Scanner;
 
 /**
  * Main class for the Omni task management application.
  * Coordinates between UI, storage, task list, and parser components to provide
- * a command-line interface for managing tasks.
+ * GUI interfaces for managing tasks.
  *
  * @author Brandon Tan
  */
@@ -41,39 +39,25 @@ public class Omni {
         parser = new Parser(ui, tasks, storage);
     }
 
+
     /**
-     * Starts the main application loop that handles user input and commands.
-     * Continues running until the user enters the exit command "bye".
+     * Processes user input and returns the appropriate response.
+     * This method is used for GUI interface mode to handle user commands.
+     *
+     * @param input The user's input command string.
+     * @return The response message from processing the command.
      */
-    /*
-    public void run() {
-        ui.greet();
-        Scanner sc = new Scanner(System.in);
-        String input = sc.nextLine().trim();
-        boolean continueExecution = true;
-
-        while (continueExecution) {
-            continueExecution = parser.handleInput(input);
-            if (continueExecution) {
-                input = sc.nextLine().trim();
-            }
-        }
-        sc.close();
-    }
-    */
-
     public String getResponse(String input) {
         return parser.handleInput(input);
     }
 
+    /**
+     * Returns the greeting message for the application.
+     * Used to display the initial welcome message to users.
+     *
+     * @return The greeting message string.
+     */
     public String greet() {
         return ui.greet();
     }
-
-    /*
-    public static void main(String[] args) {
-        Path filePath = Paths.get("data", "tasks.txt");
-        new Omni(filePath).run();
-    }
-    */
 }

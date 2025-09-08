@@ -16,7 +16,10 @@ import javafx.scene.layout.HBox;
 
 /**
  * Represents a dialog box consisting of an ImageView to represent the speaker's face
- * and a label containing text from the speaker.
+ * and a label containing text from the speaker. Used to display conversations between
+ * the user and Omni in the GUI interface.
+ *
+ * @author Brandon Tan
  */
 public class DialogBox extends HBox {
     @FXML
@@ -24,6 +27,13 @@ public class DialogBox extends HBox {
     @FXML
     private ImageView displayPicture;
 
+    /**
+     * Constructs a DialogBox with the specified text and image.
+     * Loads the FXML layout and sets up the dialog content.
+     *
+     * @param text The text content to display in the dialog.
+     * @param img The image to display as the speaker's avatar.
+     */
     private DialogBox(String text, Image img) {
         try {
             FXMLLoader fxmlLoader = new FXMLLoader(MainWindow.class.getResource("/view/DialogBox.fxml"));
@@ -40,6 +50,7 @@ public class DialogBox extends HBox {
 
     /**
      * Flips the dialog box such that the ImageView is on the left and text on the right.
+     * Changes the alignment to TOP_LEFT to match the flipped layout.
      */
     private void flip() {
         ObservableList<Node> tmp = FXCollections.observableArrayList(this.getChildren());
@@ -48,10 +59,26 @@ public class DialogBox extends HBox {
         setAlignment(Pos.TOP_LEFT);
     }
 
+    /**
+     * Creates a dialog box for user messages with the specified text and image.
+     * The image appears on the right side with text on the left.
+     *
+     * @param text The user's message text.
+     * @param img The user's avatar image.
+     * @return A DialogBox configured for user messages.
+     */
     public static DialogBox getUserDialog(String text, Image img) {
         return new DialogBox(text, img);
     }
 
+    /**
+     * Creates a dialog box for Omni's responses with the specified text and image.
+     * The image appears on the left side with text on the right (flipped layout).
+     *
+     * @param text The Omni's response text.
+     * @param img The Omni's avatar image.
+     * @return A DialogBox configured for Omni responses.
+     */
     public static DialogBox getOmniDialog(String text, Image img) {
         var db = new DialogBox(text, img);
         db.flip();
