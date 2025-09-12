@@ -31,13 +31,15 @@ public class Event extends Task {
         super(description, isDone);
         String[] startDateAndTime = start.split(" ");
         String startDate = startDateAndTime[0].trim();
+        assert !startDate.isEmpty() : "start date cannot be empty";
         this.startDate = LocalDate.parse(startDate, DATE_FORMATTER);
         if (startDateAndTime.length > 1) {
             this.startTime = LocalTime.parse(startDateAndTime[1].trim(), TIME_FORMATTER);
         }
         String[] endDateAndTime = end.split(" ");
-        String endD = endDateAndTime[0].trim();
-        this.endDate = LocalDate.parse(endD, DATE_FORMATTER);
+        String endDate = endDateAndTime[0].trim();
+        assert !endDate.isEmpty() : "end date cannot be empty";
+        this.endDate = LocalDate.parse(endDate, DATE_FORMATTER);
         if (endDateAndTime.length > 1) {
             this.endTime = LocalTime.parse(endDateAndTime[1].trim(), TIME_FORMATTER);
         }

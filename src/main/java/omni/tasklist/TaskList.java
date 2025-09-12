@@ -55,6 +55,7 @@ public class TaskList {
      * @return The task at the specified index.
      */
     public Task getTask(int index) {
+        assert index >= 0 : "index must be positive";
         return tasks.get(index);
     }
 
@@ -65,6 +66,7 @@ public class TaskList {
      * @return The task that was marked as done.
      */
     public Task markTaskDone(int index) {
+        assert index >= 0 : "index must be positive";
         Task t = getTask(index);
         t.markDone();
         return t;
@@ -77,6 +79,7 @@ public class TaskList {
      * @return The task that was unmarked.
      */
     public Task unmarkTaskDone(int index) {
+        assert index >= 0 : "index must be positive";
         Task t = getTask(index);
         t.unmarkDone();
         return t;
@@ -89,6 +92,7 @@ public class TaskList {
      * @return The added task.
      */
     public Task addTask(Task task) {
+        assert task != null : "task cannot be null";
         tasks.add(task);
         return task;
     }
@@ -100,6 +104,7 @@ public class TaskList {
      * @return The removed task.
      */
     public Task removeTask(int index) {
+        assert index >= 0 : "index must be positive";
         return tasks.remove(index);
     }
 
