@@ -29,6 +29,8 @@ import omni.ui.Ui;
  * @author Brandon Tan
  */
 public class Parser {
+    public static final String INVALID_DATE_MESSAGE = "Invalid date format! Check your date and time is in the form"
+            + " DD-MM-YYYY HHMM";
     private static final DateTimeFormatter DATE_FORMATTER = DateTimeFormatter.ofPattern("dd-MM-yyyy");
     private static final DateTimeFormatter TIME_FORMATTER = DateTimeFormatter.ofPattern("HHmm");
 
@@ -149,23 +151,43 @@ public class Parser {
      * @return True if the date string is valid.
      * @throws InvalidArgumentException If the date format is invalid.
      */
-    boolean checkValidDateString(String date) throws InvalidArgumentException {
+    boolean checkValidDateString(String firstDate, String... additionalDates) throws InvalidArgumentException {
+        validateSingleDate(firstDate);
+        for (String date : additionalDates) {
+            validateSingleDate(date);
+        }
+        return true;
+    }
+
+    private void validateSingleDate(String date) throws InvalidArgumentException {
+        validateDateFormat(date);
+        String[] dateAndTime = date.split(" ");
+        parseDate(dateAndTime[0]);
+        if (dateAndTime.length > 1) {
+            parseTime(dateAndTime[1]);
+        }
+    }
+
+    private void validateDateFormat(String date) throws InvalidArgumentException {
         String[] dateAndTime = date.split(" ");
         if (dateAndTime.length > 2) {
-            throw new InvalidArgumentException("Invalid date format! Check your date and time is in the form"
-                    + " DD-MM-YYYY HHMM");
+            throw new InvalidArgumentException(INVALID_DATE_MESSAGE);
         }
-        LocalDate d;
-        LocalTime t;
+    }
+
+    private void parseDate(String dateStr) throws InvalidArgumentException {
         try {
-            String dateStr = dateAndTime[0].trim();
-            d = LocalDate.parse(dateStr, DATE_FORMATTER);
-            if (dateAndTime.length > 1) {
-                t = LocalTime.parse(dateAndTime[1].trim(), TIME_FORMATTER);
-            }
+            LocalDate.parse(dateStr.trim(), DATE_FORMATTER);
         } catch (DateTimeParseException e) {
-            throw new InvalidArgumentException("Invalid date format! Check your date and time is in the form"
-                    + " DD-MM-YYYY HHMM");
+            throw new InvalidArgumentException(INVALID_DATE_MESSAGE);
+        }
+    }
+
+    private void parseTime(String timeStr) throws InvalidArgumentException {
+        try {
+            LocalTime.parse(timeStr.trim(), TIME_FORMATTER);
+        } catch (DateTimeParseException e) {
+            throw new InvalidArgumentException(INVALID_DATE_MESSAGE);
         }
         return true;
     }
