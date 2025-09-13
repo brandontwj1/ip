@@ -126,6 +126,8 @@ public class Storage {
      * @throws IOException If an I/O error occurs.
      */
     public void rewriteTask(Task task, int index) throws IOException {
+        assert task != null : "task cannot be null";
+        assert index >= 0 : "index must be non-negative";
         List<String> lines = Files.readAllLines(tasksPath);
         lines.remove(index);
         lines.add(index, task.getEntryString());

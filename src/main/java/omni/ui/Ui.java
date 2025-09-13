@@ -55,6 +55,7 @@ public class Ui {
      * @return String representation of the task list.
      */
     public String showTasks(TaskList tasks) {
+        assert tasks != null : "tasks cannot be null";
         if (tasks.isEmpty()) {
             return "You have no tasks... Add one!";
         }
@@ -74,6 +75,7 @@ public class Ui {
      * @return Confirmation message string.
      */
     public String showMarked(Task task) {
+        assert task != null : "task cannot be null";
         return "Congrats! I've marked this task as done:\n"
                 + "  " + task;
     }
@@ -85,6 +87,7 @@ public class Ui {
      * @return Confirmation message string.
      */
     public String showUnmarked(Task task) {
+        assert task != null : "task cannot be null";
         return "Sure thing, I've marked this task as not done yet:\n"
                 + "  " + task;
     }
@@ -97,6 +100,8 @@ public class Ui {
      * @return Confirmation message string with task count.
      */
     public String showAdded(Task task, TaskList tasks) {
+        assert task != null : "task cannot be null";
+        assert tasks != null : "tasks cannot be null";
         String taskStr = tasks.getSize() == 1 ? "task" : "tasks";
         return "Got it. I've added this task:\n"
                 + "  " + task + "\n"
@@ -110,6 +115,7 @@ public class Ui {
      * @return Confirmation message string.
      */
     public String showErased(Task task) {
+        assert task != null : "task cannot be null";
         return "Gotchu, I've deleted this task for you:\n"
                 + "  " + task;
     }
