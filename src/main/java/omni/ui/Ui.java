@@ -20,19 +20,6 @@ public class Ui {
      */
     public Ui() {}
 
-    /**
-     * Prints the starting horizontal line for a reply.
-     */
-    public void startReply() {
-        System.out.print(HORIZONTAL_LINE);
-    }
-
-    /**
-     * Prints the ending horizontal line for a reply.
-     */
-    public void endReply() {
-        System.out.println(HORIZONTAL_LINE);
-    }
 
     /**
      * Displays a greeting message to the user.
@@ -135,6 +122,15 @@ public class Ui {
     public String showErased(Task task) {
         return "Gotchu, I've deleted this task for you:\n"
                 + "  " + task;
+    }
+
+    /**
+     * Displays an error message when a command is not recognised.
+     *
+     * @return Error message string.
+     */
+    public String showUnknownCommandError() {
+        return "I can't lie I have no idea what that means...";
     }
 
     /**
