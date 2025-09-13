@@ -4,6 +4,10 @@ import java.time.LocalDate;
 import java.time.LocalTime;
 import java.time.format.DateTimeFormatter;
 
+import omni.exceptions.InvalidArgumentException;
+import omni.exceptions.OmniException;
+import omni.parser.Parser;
+
 /**
  * Represents a deadline task with a specific due date and optional time.
  * Extends the base Task class to include deadline-specific functionality.
@@ -24,14 +28,10 @@ public class Deadline extends Task {
      * @param isDone Whether the task is completed.
      * @param deadline The deadline string in format "dd-MM-yyyy" or "dd-MM-yyyy HHmm".
      */
-    public Deadline(String description, boolean isDone, String deadline) {
+    public Deadline(String description, boolean isDone, String deadline) throws InvalidArgumentException {
         super(description, isDone);
-        String[] dateAndTime = deadline.split(" ");
-        String dateStr = dateAndTime[0].trim();
-        this.date = LocalDate.parse(dateStr, DATE_FORMATTER);
-        if (dateAndTime.length > 1) {
-            this.time = LocalTime.parse(dateAndTime[1].trim(), TIME_FORMATTER);
-        }
+        this.date = Parser.parseDateFromDateTime(deadline);
+        this.time = Parser.parseTimeFromDateTime(deadline);
     }
 
     /**

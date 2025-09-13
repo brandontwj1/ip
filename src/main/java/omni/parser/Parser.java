@@ -32,6 +32,16 @@ public class Parser {
     private static final DateTimeFormatter DATE_FORMATTER = DateTimeFormatter.ofPattern("dd-MM-yyyy");
     private static final DateTimeFormatter TIME_FORMATTER = DateTimeFormatter.ofPattern("HHmm");
 
+    private static final String MESSAGE_INVALID_DATE = "Invalid date format! Check your date and time is in the form"
+            + " DD-MM-YYYY HHMM";
+    private static final String MESSAGE_INVALID_EVENT_FORMAT = "Unable to set event,"
+            + " remember to use /from and /to in that order!";
+    private static final String MESSAGE_INVALID_DEADLINE_FORMAT = "Unable to set deadline,"
+            + " remember to use /by to specify your deadline!";
+    private static final String MESSAGE_INVALID_DELETE_COMMAND = "Invalid delete command. Try again.";
+    private static final String MESSAGE_INVALID_MARK_COMMAND = "Invalid mark command. Try again.";
+    private static final String MESSAGE_INVALID_UNMARK_COMMAND = "Invalid unmark command. Try again.";
+
     private Ui ui;
     private TaskList tasks;
     private Storage storage;
@@ -68,20 +78,10 @@ public class Parser {
      * @throws IOException              If an I/O error occurs during storage update.
      */
     private String handleMark(String n) throws InvalidArgumentException, IOException {
-        int num;
-        try {
-            num = parseInt(n);
-        } catch (NumberFormatException e) {
-            throw new InvalidArgumentException("Invalid mark command. Try again.");
-        }
-
-        if (num > tasks.getSize()) {
-            throw new InvalidArgumentException("That task does not exist! Try again!");
-        } else {
-            Task t = tasks.markTaskDone(num - 1);
-            storage.rewriteTask(t, num - 1);
-            return ui.showMarked(t);
-        }
+        int num = getIndexFromString(n, MESSAGE_INVALID_MARK_COMMAND);
+        Task markedTask = tasks.markTaskDone(num);
+        storage.rewriteTask(markedTask, num);
+        return ui.showMarked(markedTask);
     }
 
     /**
@@ -92,19 +92,35 @@ public class Parser {
      * @throws IOException              If an I/O error occurs during storage update.
      */
     private String handleUnmark(String n) throws InvalidArgumentException, IOException {
-        int num;
-        try {
-            num = parseInt(n);
-        } catch (NumberFormatException e) {
-            throw new InvalidArgumentException("Invalid mark command. Try again.");
-        }
+        int num = getIndexFromString(n, MESSAGE_INVALID_UNMARK_COMMAND);
+        Task unmarkedTask = tasks.unmarkTaskDone(num);
+        storage.rewriteTask(unmarkedTask, num);
+        return ui.showUnmarked(unmarkedTask);
+    }
 
-        if (num > tasks.getSize()) {
-            throw new InvalidArgumentException("That task does not exist! Try again!");
-        } else {
-            Task t = tasks.unmarkTaskDone(num - 1);
-            storage.rewriteTask(t, num - 1);
-            return ui.showUnmarked(t);
+    /**
+     * Deletes a task based on the given task index.
+     *
+     * @param n The task number as a string.
+     * @throws InvalidArgumentException If the task number is invalid or task doesn't exist.
+     * @throws IOException              If an I/O error occurs during storage update.
+     */
+    private String handleDelete(String n) throws InvalidArgumentException, IOException {
+        int num = getIndexFromString(n, MESSAGE_INVALID_DELETE_COMMAND);
+        Task removedTask = tasks.removeTask(num);
+        storage.eraseTask(num);
+        return ui.showErased(removedTask);
+    }
+
+    private int getIndexFromString(String n, String invalidCommandMessage) throws InvalidArgumentException {
+        try {
+            int index = parseInt(n);
+            if (index > tasks.getSize() || index < 1) {
+                throw new InvalidArgumentException("That task does not exist! Try again!");
+            }
+            return index - 1; // Correct to 0-indexed for parsing
+        } catch (NumberFormatException e) {
+            throw new InvalidArgumentException(invalidCommandMessage);
         }
     }
 
@@ -114,7 +130,7 @@ public class Parser {
      * @throws UnknownCommandException If unknown command received.
      */
     private void handleUnknownCmd() throws UnknownCommandException {
-        throw new UnknownCommandException("I can't lie I have no idea what that means...");
+        throw new UnknownCommandException(ui.showUnknownCommandError());
     }
 
     /**
@@ -146,31 +162,78 @@ public class Parser {
     }
 
     /**
-     * Checks if the given date string is valid according to the expected format (DD-MM-YYYY HHMM).
+     * Checks if the date string(s) is valid according to the expected format (DD-MM-YYYY HHMM).
      *
-     * @param date The date string to validate.
-     * @return True if the date string is valid.
-     * @throws InvalidArgumentException If the date format is invalid.
+     * @param firstDate The first date string to validate.
+     * @param additionalDates Additional date strings to validate.
+     * @return True if the date strings are all valid.
+     * @throws InvalidArgumentException If the date format of any date string is invalid.
      */
-    boolean checkValidDateString(String date) throws InvalidArgumentException {
-        String[] dateAndTime = date.split(" ");
-        if (dateAndTime.length > 2) {
-            throw new InvalidArgumentException("Invalid date format! Check your date and time is in the form"
-                    + " DD-MM-YYYY HHMM");
-        }
-        LocalDate d;
-        LocalTime t;
-        try {
-            String dateStr = dateAndTime[0].trim();
-            d = LocalDate.parse(dateStr, DATE_FORMATTER);
-            if (dateAndTime.length > 1) {
-                t = LocalTime.parse(dateAndTime[1].trim(), TIME_FORMATTER);
-            }
-        } catch (DateTimeParseException e) {
-            throw new InvalidArgumentException("Invalid date format! Check your date and time is in the form"
-                    + " DD-MM-YYYY HHMM");
+    public static boolean checkValidDateString(String firstDate, String... additionalDates) throws InvalidArgumentException {
+        validateSingleDate(firstDate);
+        for (String date : additionalDates) {
+            validateSingleDate(date);
         }
         return true;
+    }
+
+    private static void validateSingleDate(String date) throws InvalidArgumentException {
+        parseDateFromDateTime(date);
+        parseTimeFromDateTime(date);
+    }
+
+    private static void validateDateFormat(String date) throws InvalidArgumentException {
+        String[] dateAndTime = date.split(" ");
+        if (dateAndTime.length > 2) {
+            throw new InvalidArgumentException(MESSAGE_INVALID_DATE);
+        }
+    }
+
+    private static LocalDate parseDate(String dateStr) throws InvalidArgumentException {
+        try {
+            return LocalDate.parse(dateStr.trim(), DATE_FORMATTER);
+        } catch (DateTimeParseException e) {
+            throw new InvalidArgumentException(MESSAGE_INVALID_DATE);
+        }
+    }
+
+    private static LocalTime parseTime(String timeStr) throws InvalidArgumentException {
+        try {
+            return LocalTime.parse(timeStr.trim(), TIME_FORMATTER);
+        } catch (DateTimeParseException e) {
+            throw new InvalidArgumentException(MESSAGE_INVALID_DATE);
+        }
+    }
+
+    /**
+     * Parses and returns the {@link LocalDate} from a date-time string.
+     * The expected format is "DD-MM-YYYY HHMM".
+     *
+     * @param date The date-time string to parse.
+     * @return The parsed {@link LocalDate}.
+     * @throws InvalidArgumentException If the date format is invalid.
+     */
+    public static LocalDate parseDateFromDateTime(String date) throws InvalidArgumentException {
+        validateDateFormat(date);
+        String dateStr = date.split(" ")[0].trim();
+        return parseDate(dateStr);
+    }
+
+    /**
+     * Parses and returns the {@link LocalTime} from a date-time string.
+     * The expected format is "DD-MM-YYYY HHMM".
+     *
+     * @param date The date-time string to parse.
+     * @return The parsed {@link LocalTime}, or null if no time is present.
+     * @throws InvalidArgumentException If the time format is invalid.
+     */
+    public static LocalTime parseTimeFromDateTime(String date) throws InvalidArgumentException {
+        validateDateFormat(date);
+        String[] dateAndTime = date.split(" ");
+        if (dateAndTime.length <= 1) {
+            return null;
+        }
+        return parseTime(dateAndTime[1]);
     }
 
     /**
@@ -181,19 +244,29 @@ public class Parser {
      * @throws IOException              If an I/O error occurs during storage write.
      */
     private String handleDeadline(String arg) throws InvalidArgumentException, IOException {
+        String[] parts = getDeadlineParts(arg);
+        String description = getDeadlineDescription(parts);
+        String date = parts[1].trim();
+        checkValidDateString(date);
+
+        Deadline newDeadline = new Deadline(description, false, date);
+        return handleAddTask(newDeadline);
+    }
+
+    private static String getDeadlineDescription(String[] parts) throws InvalidArgumentException {
+        String description = parts[0].trim();
+        if (description.isEmpty()) {
+            throw new InvalidArgumentException("Give your deadline a description!");
+        }
+        return description;
+    }
+
+    private static String[] getDeadlineParts(String arg) throws InvalidArgumentException {
         String[] parts = arg.split("/by", 2);
         if (parts.length < 2) {
-            throw new InvalidArgumentException("Unable to set deadline, remember to use /by to specify your deadline!");
-        } else {
-            String description = parts[0].trim();
-            if (description.isEmpty()) {
-                throw new InvalidArgumentException("Give your deadline a description!");
-            }
-            String date = parts[1].trim();
-            checkValidDateString(date);
-            Deadline newDeadline = new Deadline(description, false, date);
-            return handleAddTask(newDeadline);
+            throw new InvalidArgumentException(MESSAGE_INVALID_DEADLINE_FORMAT);
         }
+        return parts;
     }
 
     /**
@@ -204,51 +277,39 @@ public class Parser {
      * @throws IOException              If an I/O error occurs during storage write.
      */
     private String handleEvent(String arg) throws InvalidArgumentException, IOException {
-        String[] parts = arg.split("/from", 2);
-        if (parts.length < 2) {
-            throw new InvalidArgumentException("Unable to set event, "
-                    + "remember to use /from and /to in that order!");
-        } else {
-            String description = parts[0].trim();
-            if (description.isEmpty()) {
-                throw new InvalidArgumentException("Give your event a description!");
-            }
-            String[] dates = parts[1].trim().split("/to", 2);
-            if (dates.length < 2) {
-                throw new InvalidArgumentException("Unable to set event, remember to use /from and /to in that order!");
-            } else {
-                String from = dates[0].trim();
-                String to = dates[1].trim();
-                checkValidDateString(from);
-                checkValidDateString(to);
-                Event newEvent = new Event(description, false, from, to);
-                return handleAddTask(newEvent);
-            }
-        }
+        String[] parts = getEventParts(arg);
+        String description = getEventDescription(parts);
+        String[] dates = getDates(parts);
+        String from = dates[0].trim();
+        String to = dates[1].trim();
+        checkValidDateString(from, to);
+
+        Event newEvent = new Event(description, false, from, to);
+        return handleAddTask(newEvent);
     }
 
-    /**
-     * Deletes a task based on the given task index.
-     *
-     * @param index The task number as a string.
-     * @throws InvalidArgumentException If the task number is invalid or task doesn't exist.
-     * @throws IOException              If an I/O error occurs during storage update.
-     */
-    private String handleDelete(String index) throws InvalidArgumentException, IOException {
-        int num;
-        try {
-            num = parseInt(index);
-        } catch (NumberFormatException e) {
-            throw new InvalidArgumentException("Invalid delete command. Try again.");
+    private static String[] getDates(String[] parts) throws InvalidArgumentException {
+        String[] dates = parts[1].trim().split("/to", 2);
+        if (dates.length < 2) {
+            throw new InvalidArgumentException(MESSAGE_INVALID_EVENT_FORMAT);
         }
+        return dates;
+    }
 
-        if (num > tasks.getSize()) {
-            throw new InvalidArgumentException("That task does not exist! Try again!");
-        } else {
-            Task removedTask = tasks.removeTask(num - 1);
-            storage.eraseTask(num - 1);
-            return ui.showErased(removedTask);
+    private static String getEventDescription(String[] parts) throws InvalidArgumentException {
+        String description = parts[0].trim();
+        if (description.isEmpty()) {
+            throw new InvalidArgumentException("Give your event a description!");
         }
+        return description;
+    }
+
+    private static String[] getEventParts(String arg) throws InvalidArgumentException {
+        String[] parts = arg.split("/from", 2);
+        if (parts.length < 2) {
+            throw new InvalidArgumentException(MESSAGE_INVALID_EVENT_FORMAT);
+        }
+        return parts;
     }
 
     /**
@@ -272,46 +333,30 @@ public class Parser {
         String[] parts = input.split("\\s+", 2);
         String cmd = parts[0];
         String arg = parts.length > 1 ? parts[1] : "";
-        String reply = "";
+        String reply = handleCommand(cmd, arg);
 
-        boolean continueExecution = true;
+        reply = handleCommand(cmd, arg);
+        return reply;
+    }
+
+    private String handleCommand(String cmd, String arg) {
         try {
-            switch (cmd.toLowerCase()) {
-            case "list":
-                reply = handleList();
-                break;
-            case "mark":
-                reply = handleMark(arg);
-                break;
-            case "unmark":
-                reply = handleUnmark(arg);
-                break;
-            case "todo":
-                reply = handleTodo(arg);
-                break;
-            case "deadline":
-                reply = handleDeadline(arg);
-                break;
-            case "event":
-                reply = handleEvent(arg);
-                break;
-            case "delete":
-                reply = handleDelete(arg);
-                break;
-            case "find":
-                reply = handleFind(arg);
-                break;
-            case "bye":
-                continueExecution = false;
-                reply = ui.exit();
-                break;
-            default:
-                handleUnknownCmd();
-            }
+            return switch (cmd.toLowerCase()) {
+            case "list" -> handleList();
+            case "mark" -> handleMark(arg);
+            case "unmark" -> handleUnmark(arg);
+            case "todo" -> handleTodo(arg);
+            case "deadline" -> handleDeadline(arg);
+            case "event" -> handleEvent(arg);
+            case "delete" -> handleDelete(arg);
+            case "find" -> handleFind(arg);
+            case "bye" -> ui.exit();
+            default -> ui.showUnknownCommandError();
+            };
         } catch (OmniException e) {
-            reply = e.getUserMessage();
+            return e.getUserMessage();
         } catch (IOException e) {
-            reply = e.getMessage();
+            return e.getMessage();
         }
 
         assert !reply.isEmpty() : "Reply cannot be empty";
