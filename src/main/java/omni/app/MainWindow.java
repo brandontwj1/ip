@@ -64,7 +64,9 @@ public class MainWindow extends AnchorPane {
                 DialogBox.getOmniDialog(response, omniImage)
         );
         userInput.clear();
-        if (input.equalsIgnoreCase("bye")) {
+
+        // TODO: bug fix - does not quit if arguments given with bye command
+        if (input.trim().equalsIgnoreCase("bye")) {
             PauseTransition pause = new PauseTransition(Duration.seconds(1));
             pause.setOnFinished(event -> Platform.exit());
             pause.play();

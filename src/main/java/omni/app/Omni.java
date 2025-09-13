@@ -28,6 +28,7 @@ public class Omni {
      * @param filePath The path to the tasks storage file.
      */
     public Omni(Path filePath) {
+        assert filePath != null : "filePath cannot be null";
         ui = new Ui();
         storage = new Storage(filePath);
         try {

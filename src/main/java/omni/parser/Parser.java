@@ -47,6 +47,9 @@ public class Parser {
         this.ui = ui;
         this.tasks = tasks;
         this.storage = storage;
+        assert ui != null : "Ui object cannot be null";
+        assert tasks != null : "TaskList object cannot be null";
+        assert storage != null : "Storage object cannot be null";
     }
 
     /**
@@ -265,6 +268,7 @@ public class Parser {
      * @return Output string reply.
      */
     public String handleInput(String input) {
+        assert input != null : "input cannot be null";
         String[] parts = input.split("\\s+", 2);
         String cmd = parts[0];
         String arg = parts.length > 1 ? parts[1] : "";
@@ -309,6 +313,8 @@ public class Parser {
         } catch (IOException e) {
             reply = e.getMessage();
         }
+
+        assert !reply.isEmpty() : "Reply cannot be empty";
         return reply;
     }
 }
