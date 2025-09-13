@@ -12,7 +12,6 @@ import omni.tasks.Task;
  * @author Brandon Tan
  */
 public class Ui {
-    private static final String HORIZONTAL_LINE = "   _________________________________________________________\n";
     private static final String INDENT = "    ";
 
     /**
@@ -38,15 +37,6 @@ public class Ui {
      */
     public String exit() {
         return "Byeee! See you in a bit!";
-    }
-
-    /**
-     * Displays an error message to the user.
-     *
-     * @param errorMessage The error message to display.
-     */
-    public void showError(String errorMessage) {
-        System.out.println(INDENT + errorMessage);
     }
 
     /**
@@ -142,13 +132,18 @@ public class Ui {
     public String showMatchingTasks(ArrayList<Task> matchingTasks) {
         if (matchingTasks.isEmpty()) {
             return "No tasks containing that keyword. Try another one!";
-        } else {
-            StringBuilder reply = new StringBuilder("Here are the matching tasks in your list:\n");
-            for (int i = 0; i < matchingTasks.size(); i++) {
-                Task t = matchingTasks.get(i);
-                reply.append(String.format("    %d.%s\n", i + 1, t));
-            }
-            return reply.toString();
         }
+
+        StringBuilder reply = getReply(matchingTasks);
+        return reply.toString();
+    }
+
+    private static StringBuilder getReply(ArrayList<Task> matchingTasks) {
+        StringBuilder reply = new StringBuilder("Here are the matching tasks in your list:\n");
+        for (int i = 0; i < matchingTasks.size(); i++) {
+            Task t = matchingTasks.get(i);
+            reply.append(String.format("    %d.%s\n", i + 1, t));
+        }
+        return reply;
     }
 }

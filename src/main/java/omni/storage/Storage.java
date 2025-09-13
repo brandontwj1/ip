@@ -10,6 +10,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 import omni.exceptions.CorruptedFileException;
+import omni.exceptions.OmniException;
 import omni.tasks.Deadline;
 import omni.tasks.Event;
 import omni.tasks.Task;
@@ -37,9 +38,9 @@ public class Storage {
      * Loads tasks from the file and returns them as an ArrayList.
      *
      * @return An ArrayList of tasks loaded from the file.
-     * @throws CorruptedFileException If the file is corrupted or cannot be read.
+     * @throws OmniException If the file is corrupted or cannot be read, or when date format is invalid.
      */
-    public ArrayList<Task> loadTasks() throws CorruptedFileException {
+    public ArrayList<Task> loadTasks() throws OmniException {
         ArrayList<Task> tasks = new ArrayList<>();
 
         if (!Files.exists(tasksPath)) {
@@ -59,7 +60,7 @@ public class Storage {
         return tasks;
     }
 
-    private static Task getTaskToAdd(String line, String type, String[] values, String description, boolean isDone) throws CorruptedFileException {
+    private static Task getTaskToAdd(String line, String type, String[] values, String description, boolean isDone) throws OmniException {
         return switch (type) {
         case "T" -> createTodo(line, values, description, isDone);
         case "D" -> createDeadline(line, values, description, isDone);
@@ -68,21 +69,21 @@ public class Storage {
         };
     }
 
-    private static Event createEvent(String line, String[] values, String description, boolean isDone) throws CorruptedFileException {
+    private static Event createEvent(String line, String[] values, String description, boolean isDone) throws OmniException {
         if (values.length != 5) {
             throw new CorruptedFileException("Entry length for event invalid.\n" + line);
         }
         return new Event(description, isDone, values[3].trim(), values[4].trim());
     }
 
-    private static Deadline createDeadline(String line, String[] values, String description, boolean isDone) throws CorruptedFileException {
+    private static Deadline createDeadline(String line, String[] values, String description, boolean isDone) throws OmniException {
         if (values.length != 4) {
             throw new CorruptedFileException("Entry length for deadline invalid.\n" + line);
         }
         return new Deadline(description, isDone, values[3].trim());
     }
 
-    private static Todo createTodo(String line, String[] values, String description, boolean isDone) throws CorruptedFileException {
+    private static Todo createTodo(String line, String[] values, String description, boolean isDone) throws OmniException {
         if (values.length != 3) {
             throw new CorruptedFileException("Entry length for todo invalid.\n" + line);
         }

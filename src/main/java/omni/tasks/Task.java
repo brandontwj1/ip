@@ -1,5 +1,7 @@
 package omni.tasks;
 
+import java.util.Date;
+
 /**
  * Represents a task with a description and completion status.
  * Serves as the base class for all task types in the Omni task management system.

@@ -4,6 +4,10 @@ import java.time.LocalDate;
 import java.time.LocalTime;
 import java.time.format.DateTimeFormatter;
 
+import omni.exceptions.InvalidArgumentException;
+import omni.exceptions.OmniException;
+import omni.parser.Parser;
+
 /**
  * Represents an event task with start and end dates and optional times.
  * Extends the base Task class to include event-specific functionality with duration.
@@ -19,28 +23,20 @@ public class Event extends Task {
     protected LocalDate endDate;
     protected LocalTime endTime;
 
-    /**
-     * Constructs an Event task with the specified description, completion status, start and end times.
-     *
-     * @param description The task description.
-     * @param isDone Whether the task is completed.
-     * @param start The start date and time string in format "dd-MM-yyyy" or "dd-MM-yyyy HHmm".
-     * @param end The end date and time string in format "dd-MM-yyyy" or "dd-MM-yyyy HHmm".
-     */
-    public Event(String description, boolean isDone, String start, String end) {
+        /**
+         * Constructs an Event task with the specified description, completion status, start and end times.
+         *
+         * @param description The task description.
+         * @param isDone Whether the task is completed.
+         * @param start The start date and time string in format "dd-MM-yyyy" or "dd-MM-yyyy HHmm".
+         * @param end The end date and time string in format "dd-MM-yyyy" or "dd-MM-yyyy HHmm".
+         */
+    public Event(String description, boolean isDone, String start, String end) throws InvalidArgumentException {
         super(description, isDone);
-        String[] startDateAndTime = start.split(" ");
-        String startDate = startDateAndTime[0].trim();
-        this.startDate = LocalDate.parse(startDate, DATE_FORMATTER);
-        if (startDateAndTime.length > 1) {
-            this.startTime = LocalTime.parse(startDateAndTime[1].trim(), TIME_FORMATTER);
-        }
-        String[] endDateAndTime = end.split(" ");
-        String endD = endDateAndTime[0].trim();
-        this.endDate = LocalDate.parse(endD, DATE_FORMATTER);
-        if (endDateAndTime.length > 1) {
-            this.endTime = LocalTime.parse(endDateAndTime[1].trim(), TIME_FORMATTER);
-        }
+        this.startDate = Parser.parseDateFromDateTime(start);
+        this.startTime = Parser.parseTimeFromDateTime(start);
+        this.endDate = Parser.parseDateFromDateTime(end);
+        this.endTime = Parser.parseTimeFromDateTime(end);
     }
 
     /**

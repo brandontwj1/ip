@@ -98,7 +98,7 @@ public class Parser {
     /**
      * Deletes a task based on the given task index.
      *
-     * @param index The task number as a string.
+     * @param n The task number as a string.
      * @throws InvalidArgumentException If the task number is invalid or task doesn't exist.
      * @throws IOException              If an I/O error occurs during storage update.
      */
@@ -166,7 +166,7 @@ public class Parser {
      * @return True if the date strings are all valid.
      * @throws InvalidArgumentException If the date format of any date string is invalid.
      */
-    boolean checkValidDateString(String firstDate, String... additionalDates) throws InvalidArgumentException {
+    public static boolean checkValidDateString(String firstDate, String... additionalDates) throws InvalidArgumentException {
         validateSingleDate(firstDate);
         for (String date : additionalDates) {
             validateSingleDate(date);
@@ -174,36 +174,63 @@ public class Parser {
         return true;
     }
 
-    private void validateSingleDate(String date) throws InvalidArgumentException {
-        validateDateFormat(date);
-        String[] dateAndTime = date.split(" ");
-        parseDate(dateAndTime[0]);
-        if (dateAndTime.length > 1) {
-            parseTime(dateAndTime[1]);
-        }
+    private static void validateSingleDate(String date) throws InvalidArgumentException {
+        parseDateFromDateTime(date);
+        parseTimeFromDateTime(date);
     }
 
-    private void validateDateFormat(String date) throws InvalidArgumentException {
+    private static void validateDateFormat(String date) throws InvalidArgumentException {
         String[] dateAndTime = date.split(" ");
         if (dateAndTime.length > 2) {
             throw new InvalidArgumentException(MESSAGE_INVALID_DATE);
         }
     }
 
-    private void parseDate(String dateStr) throws InvalidArgumentException {
+    private static LocalDate parseDate(String dateStr) throws InvalidArgumentException {
         try {
-            LocalDate.parse(dateStr.trim(), DATE_FORMATTER);
+            return LocalDate.parse(dateStr.trim(), DATE_FORMATTER);
         } catch (DateTimeParseException e) {
             throw new InvalidArgumentException(MESSAGE_INVALID_DATE);
         }
     }
 
-    private void parseTime(String timeStr) throws InvalidArgumentException {
+    private static LocalTime parseTime(String timeStr) throws InvalidArgumentException {
         try {
-            LocalTime.parse(timeStr.trim(), TIME_FORMATTER);
+            return LocalTime.parse(timeStr.trim(), TIME_FORMATTER);
         } catch (DateTimeParseException e) {
             throw new InvalidArgumentException(MESSAGE_INVALID_DATE);
         }
+    }
+
+    /**
+     * Parses and returns the {@link LocalDate} from a date-time string.
+     * The expected format is "DD-MM-YYYY HHMM".
+     *
+     * @param date The date-time string to parse.
+     * @return The parsed {@link LocalDate}.
+     * @throws InvalidArgumentException If the date format is invalid.
+     */
+    public static LocalDate parseDateFromDateTime(String date) throws InvalidArgumentException {
+        validateDateFormat(date);
+        String dateStr = date.split(" ")[0].trim();
+        return parseDate(dateStr);
+    }
+
+    /**
+     * Parses and returns the {@link LocalTime} from a date-time string.
+     * The expected format is "DD-MM-YYYY HHMM".
+     *
+     * @param date The date-time string to parse.
+     * @return The parsed {@link LocalTime}, or null if no time is present.
+     * @throws InvalidArgumentException If the time format is invalid.
+     */
+    public static LocalTime parseTimeFromDateTime(String date) throws InvalidArgumentException {
+        validateDateFormat(date);
+        String[] dateAndTime = date.split(" ");
+        if (dateAndTime.length <= 1) {
+            return null;
+        }
+        return parseTime(dateAndTime[1]);
     }
 
     /**
