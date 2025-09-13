@@ -40,56 +40,81 @@ public class Storage {
      * @throws CorruptedFileException If the file is corrupted or cannot be read.
      */
     public ArrayList<Task> loadTasks() throws CorruptedFileException {
-        if (!Files.exists(tasksPath)) {
-            try {
-                Files.createDirectories(tasksPath.getParent());
-                Files.createFile(tasksPath);
-            } catch (IOException e) {
-                throw new CorruptedFileException(e.getMessage());
-            }
-        }
-
         ArrayList<Task> tasks = new ArrayList<>();
 
+        if (!Files.exists(tasksPath)) {
+            createTasksFile();
+            return tasks;
+        }
+
+        List<String> lines = getAllLines();
+        for (String line : lines) {
+            String[] values = getValues(line);
+            String type = values[0].trim();
+            String description = values[1].trim();
+            boolean isDone = parseInt(values[2].trim()) != 0;
+            Task taskToAdd = getTaskToAdd(line, type, values, description, isDone);
+            tasks.add(taskToAdd);
+        }
+        return tasks;
+    }
+
+    private static Task getTaskToAdd(String line, String type, String[] values, String description, boolean isDone) throws CorruptedFileException {
+        return switch (type) {
+        case "T" -> createTodo(line, values, description, isDone);
+        case "D" -> createDeadline(line, values, description, isDone);
+        case "E" -> createEvent(line, values, description, isDone);
+        default -> throw new CorruptedFileException("Task type not found.\n" + line);
+        };
+    }
+
+    private static Event createEvent(String line, String[] values, String description, boolean isDone) throws CorruptedFileException {
+        if (values.length != 5) {
+            throw new CorruptedFileException("Entry length for event invalid.\n" + line);
+        }
+        return new Event(description, isDone, values[3].trim(), values[4].trim());
+    }
+
+    private static Deadline createDeadline(String line, String[] values, String description, boolean isDone) throws CorruptedFileException {
+        if (values.length != 4) {
+            throw new CorruptedFileException("Entry length for deadline invalid.\n" + line);
+        }
+        return new Deadline(description, isDone, values[3].trim());
+    }
+
+    private static Todo createTodo(String line, String[] values, String description, boolean isDone) throws CorruptedFileException {
+        if (values.length != 3) {
+            throw new CorruptedFileException("Entry length for todo invalid.\n" + line);
+        }
+        return new Todo(description, isDone);
+    }
+
+    private static String[] getValues(String line) throws CorruptedFileException {
+        String[] values = line.split("\\|");
+        if (values.length < 3 || values.length > 5) {
+            throw new CorruptedFileException("Entry length invalid.\n" + line);
+        }
+        return values;
+    }
+
+    private List<String> getAllLines() throws CorruptedFileException {
+        List<String> lines;
         try {
-            List<String> lines = Files.readAllLines(tasksPath);
-            for (String line : lines) {
-                String[] values = line.split("\\|");
-                if (values.length < 3 || values.length > 5) {
-                    throw new CorruptedFileException("Entry length invalid.\n" + line);
-                } else {
-                    String type = values[0].trim();
-                    String description = values[1].trim();
-                    boolean isDone = parseInt(values[2].trim()) != 0;
-                    switch (type) {
-                    case "T":
-                        if (values.length != 3) {
-                            throw new CorruptedFileException("Entry length for todo invalid.\n" + line);
-                        }
-                        tasks.add(new Todo(description, isDone));
-                        break;
-                    case "D":
-                        if (values.length != 4) {
-                            throw new CorruptedFileException("Entry length for deadline invalid.\n" + line);
-                        }
-                        tasks.add(new Deadline(description, isDone, values[3].trim()));
-                        break;
-                    case "E":
-                        if (values.length != 5) {
-                            throw new CorruptedFileException("Entry length for event invalid.\n" + line);
-                        }
-                        tasks.add(new Event(description, isDone, values[3].trim(), values[4].trim()));
-                        break;
-                    default:
-                        throw new CorruptedFileException("Task type not found.\n" + line);
-                    }
-                }
-            }
+            lines = Files.readAllLines(tasksPath);
         } catch (IOException e) {
             throw new CorruptedFileException(e.getMessage());
         }
+        return lines;
+    }
 
-        return tasks;
+    /** Create file based on the specified tasksPath */
+    private void createTasksFile() throws CorruptedFileException {
+        try {
+            Files.createDirectories(tasksPath.getParent());
+            Files.createFile(tasksPath);
+        } catch (IOException e) {
+            throw new CorruptedFileException(e.getMessage());
+        }
     }
 
     /**
