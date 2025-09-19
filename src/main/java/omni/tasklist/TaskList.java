@@ -139,6 +139,14 @@ public class TaskList {
         taskToSet.setDescription(description);
     }
 
+    /**
+     * Changes the deadline date of the task at the specified index.
+     * The task must be a Deadline task for this operation to succeed.
+     *
+     * @param index The index of the task to update.
+     * @param by The new deadline date string.
+     * @throws InvalidArgumentException If the task is not a Deadline task.
+     */
     public void changeBy(int index, String by) throws InvalidArgumentException {
         Task taskToSet = tasks.get(index);
         if (!(taskToSet instanceof Deadline deadlineTask)) {
@@ -147,6 +155,14 @@ public class TaskList {
         deadlineTask.setDeadline(by);
     }
 
+    /**
+     * Changes the start date of the task at the specified index.
+     * The task must be an Event task for this operation to succeed.
+     *
+     * @param index The index of the task to update.
+     * @param from The new start date string.
+     * @throws InvalidArgumentException If the task is not an Event task.
+     */
     public void changeFrom(int index, String from) throws InvalidArgumentException {
         Task taskToSet = tasks.get(index);
         if (!(taskToSet instanceof Event eventTask)) {
@@ -155,6 +171,14 @@ public class TaskList {
         eventTask.setStart(from);
     }
 
+    /**
+     * Changes the end date of the task at the specified index.
+     * The task must be an Event task for this operation to succeed.
+     *
+     * @param index The index of the task to update.
+     * @param to The new end date string.
+     * @throws InvalidArgumentException If the task is not an Event task.
+     */
     public void changeTo(int index, String to) throws InvalidArgumentException {
         Task taskToSet = tasks.get(index);
         if (!(taskToSet instanceof Event eventTask)) {

@@ -43,6 +43,10 @@ public class Parser {
     private static final String MESSAGE_INVALID_UNMARK_COMMAND = "Invalid unmark command. Try again.";
     private static final String MESSAGE_INVALID_UPDATE_COMMAND = "Invalid update command. Try again.";
 
+    private static final int MIN_UPDATE_ARGS = 3;
+    private static final int TASK_INDEX_POSITION = 0;
+    private static final int FIRST_UPDATE_ARG = 1;
+
     private Ui ui;
     private TaskList tasks;
     private Storage storage;
@@ -165,12 +169,13 @@ public class Parser {
     /**
      * Checks if the date string(s) is valid according to the expected format (DD-MM-YYYY HHMM).
      *
-     * @param firstDate The first date string to validate.
-     * @param additionalDates Additional date strings to validate.
-     * @return True if the date strings are all valid.
+     * @param firstDate The primary date string to validate.
+     * @param additionalDates Additional date strings to validate (varargs).
+     * @return True if all dates are valid.
      * @throws InvalidArgumentException If the date format of any date string is invalid.
      */
-    public static boolean checkValidDateString(String firstDate, String... additionalDates) throws InvalidArgumentException {
+    public static boolean checkValidDateString(String firstDate, String... additionalDates)
+            throws InvalidArgumentException {
         validateSingleDate(firstDate);
         for (String date : additionalDates) {
             validateSingleDate(date);
@@ -324,28 +329,56 @@ public class Parser {
     }
 
     /**
-     * Updates the task at the given index
+     * Updates a task with new values based on the provided arguments.
+     * Expects format: "index /tag newValue" (e.g., "1 /desc new description").
      *
-     * @param args The arguments of the command.
-     * @return Confirmation message showing updated task.
-     * @throws OmniException
+     * @param arg The update command arguments containing task index and modifications
+     * @return Confirmation message showing the updated task
+     * @throws InvalidArgumentException If arguments are invalid or update fails
+     * @throws IOException If storage update fails
      */
     private String handleUpdate(String arg) throws InvalidArgumentException, IOException {
+        String[] args = parseUpdateArgs(arg);
+        int taskIndex = extractTaskIndex(args);
+        return executeUpdateWithRollback(args, taskIndex);
+    }
+
+    private String[] parseUpdateArgs(String arg) throws InvalidArgumentException {
         String[] args = arg.split("\\s+");
-        if (args.length < 3) {
+        if (args.length < MIN_UPDATE_ARGS) {
             throw new InvalidArgumentException(MESSAGE_INVALID_UPDATE_COMMAND);
         }
-        int index = getIndexFromString(args[0], MESSAGE_INVALID_UPDATE_COMMAND);
-        Task originalTask = tasks.getTask(index).copy(); // Create copy of task
+        return args;
+    }
+
+    private int extractTaskIndex(String[] args) throws InvalidArgumentException {
+        return getIndexFromString(args[TASK_INDEX_POSITION], MESSAGE_INVALID_UPDATE_COMMAND);
+    }
+
+    private String executeUpdateWithRollback(String[] args, int taskIndex) throws InvalidArgumentException, IOException {
+        Task originalTask = tasks.getTask(taskIndex).copy();
+
         try {
-            handleUpdateArgs(args, index);
-        } catch (InvalidArgumentException e) {
-            tasks.setTask(index, originalTask); // Reset task at index to original task
-            throw new InvalidArgumentException(e.getUserMessage());
+            applyUpdates(args, taskIndex);
+            persistUpdatedTask(taskIndex);
+            return ui.showUpdated(tasks.getTask(taskIndex));
+        } catch (InvalidArgumentException | IOException e) {
+            rollbackTask(taskIndex, originalTask);
+            throw e;
         }
-        Task updatedTask = tasks.getTask(index);
-        storage.rewriteTask(updatedTask, index);
-        return ui.showUpdated(updatedTask);
+    }
+
+    private void applyUpdates(String[] args, int taskIndex) throws InvalidArgumentException {
+        handleUpdateArgs(args, taskIndex);
+    }
+
+    private void persistUpdatedTask(int taskIndex) throws IOException {
+        Task updatedTask = tasks.getTask(taskIndex);
+        storage.rewriteTask(updatedTask, taskIndex);
+    }
+
+    private void rollbackTask(int taskIndex, Task originalTask) {
+        tasks.setTask(taskIndex, originalTask);
     }
 
     private void handleUpdateArgs(String[] args, int index) throws InvalidArgumentException {
@@ -411,7 +444,6 @@ public class Parser {
         String date = getDateToUpdate(argIndex, args);
         tasks.changeTo(taskIndex, date);
     }
-
 
 
 

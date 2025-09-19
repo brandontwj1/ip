@@ -19,7 +19,7 @@ import javafx.stage.Stage;
  */
 public class Main extends Application {
 
-    Path filePath = Paths.get("data", "tasks.txt");
+    private Path filePath = Paths.get("data", "tasks.txt");
     private Omni omni = new Omni(filePath);
 
     /**

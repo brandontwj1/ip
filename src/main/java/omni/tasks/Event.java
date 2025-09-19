@@ -5,7 +5,6 @@ import java.time.LocalTime;
 import java.time.format.DateTimeFormatter;
 
 import omni.exceptions.InvalidArgumentException;
-import omni.exceptions.OmniException;
 import omni.parser.Parser;
 
 /**
@@ -39,6 +38,11 @@ public class Event extends Task {
         this.endTime = Parser.parseTimeFromDateTime(end);
     }
 
+    /**
+     * Creates a copy of the given Event object.
+     *
+     * @param other The Event object to copy.
+     */
     public Event(Event other) {
         super(other);
         this.startDate = other.startDate;

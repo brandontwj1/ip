@@ -1,7 +1,5 @@
 package omni.tasks;
 
-import java.util.Date;
-
 /**
  * Represents a task with a description and completion status.
  * Serves as the base class for all task types in the Omni task management system.
@@ -23,14 +21,23 @@ public class Task {
         this.isDone = isDone;
     }
 
+    /**
+     * Copy constructor for creating a deep copy of another Task.
+     *
+     * @param other The Task to copy.
+     */
     public Task(Task other) {
         this.description = other.description;
         this.isDone = other.isDone;
     }
 
-
+    /**
+     * Creates and returns a copy of this Task.
+     *
+     * @return Copy of the current instance.
+     */
     public Task copy() {
-        return new Task(description, isDone);
+        return new Task(this);
     }
 
     /**

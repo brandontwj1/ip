@@ -152,6 +152,12 @@ public class Ui {
         return reply;
     }
 
+    /**
+     * Shows a confirmation message when a task has been updated.
+     *
+     * @param updatedTask The task that was updated.
+     * @return The formatted confirmation message.
+     */
     public String showUpdated(Task updatedTask) {
         return "Alrighty, I've updated this task for you:\n"
                 + "  " + updatedTask;

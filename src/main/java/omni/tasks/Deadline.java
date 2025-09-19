@@ -5,7 +5,6 @@ import java.time.LocalTime;
 import java.time.format.DateTimeFormatter;
 
 import omni.exceptions.InvalidArgumentException;
-import omni.exceptions.OmniException;
 import omni.parser.Parser;
 
 /**
@@ -34,6 +33,11 @@ public class Deadline extends Task {
         this.time = Parser.parseTimeFromDateTime(deadline);
     }
 
+    /**
+     *  * Creates a copy of the given Deadline object.
+     *
+     * @param other The Deadline object to copy.
+     */
     public Deadline(Deadline other) {
         super(other);
         this.date = other.date;
@@ -44,8 +48,6 @@ public class Deadline extends Task {
     public Deadline copy() {
         return new Deadline(this);
     }
-
-
 
     /**
      * Returns the deadline as a formatted string.
