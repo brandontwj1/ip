@@ -23,6 +23,16 @@ public class Task {
         this.isDone = isDone;
     }
 
+    public Task(Task other) {
+        this.description = other.description;
+        this.isDone = other.isDone;
+    }
+
+
+    public Task copy() {
+        return new Task(description, isDone);
+    }
+
     /**
      * Marks this task as done.
      */
@@ -72,6 +82,10 @@ public class Task {
     public String getEntryString() {
         String done = this.isDone() ? "1" : "0";
         return "T | " + this.getDescription() + " | " + done;
+    }
+
+    public void setDescription(String description) {
+        this.description = description;
     }
 
     /**

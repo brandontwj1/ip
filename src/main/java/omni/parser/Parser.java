@@ -41,6 +41,7 @@ public class Parser {
     private static final String MESSAGE_INVALID_DELETE_COMMAND = "Invalid delete command. Try again.";
     private static final String MESSAGE_INVALID_MARK_COMMAND = "Invalid mark command. Try again.";
     private static final String MESSAGE_INVALID_UNMARK_COMMAND = "Invalid unmark command. Try again.";
+    private static final String MESSAGE_INVALID_UPDATE_COMMAND = "Invalid update command. Try again.";
 
     private Ui ui;
     private TaskList tasks;
@@ -323,6 +324,98 @@ public class Parser {
     }
 
     /**
+     * Updates the task at the given index
+     *
+     * @param args The arguments of the command.
+     * @return Confirmation message showing updated task.
+     * @throws OmniException
+     */
+    private String handleUpdate(String arg) throws InvalidArgumentException, IOException {
+        String[] args = arg.split("\\s+");
+        if (args.length < 3) {
+            throw new InvalidArgumentException(MESSAGE_INVALID_UPDATE_COMMAND);
+        }
+        int index = getIndexFromString(args[0], MESSAGE_INVALID_UPDATE_COMMAND);
+        Task originalTask = tasks.getTask(index).copy(); // Create copy of task
+        try {
+            handleUpdateArgs(args, index);
+        } catch (InvalidArgumentException e) {
+            tasks.setTask(index, originalTask); // Reset task at index to original task
+            throw new InvalidArgumentException(e.getUserMessage());
+        }
+        Task updatedTask = tasks.getTask(index);
+        storage.rewriteTask(updatedTask, index);
+        return ui.showUpdated(updatedTask);
+    }
+
+    private void handleUpdateArgs(String[] args, int index) throws InvalidArgumentException {
+        for (int i = 1; i < args.length; i++) {
+            checkSufficientUpdateArgs(i, args);
+            switch (args[i]) {
+            case "/desc" -> handleUpdateDescription(index, i + 1, args);
+            case "/by" -> handleUpdateBy(index, i + 1, args);
+            case "/from" -> handleUpdateFrom(index, i + 1, args);
+            case "/to" -> handleUpdateTo(index, i + 1, args);
+            default -> {
+                continue;
+            }
+            }
+        }
+    }
+
+    private void checkSufficientUpdateArgs(int index, String[] args) throws InvalidArgumentException {
+        if (isUpdateTag(args[index]) && (index + 1 >= args.length)) {
+            throw new InvalidArgumentException("Not enough arguments!");
+        }
+    }
+
+    private boolean isUpdateTag(String arg) {
+        return arg.equals("/desc") || arg.equals("/from") || arg.equals("/to") || arg.equals("/by");
+    }
+
+    private void handleUpdateDescription(int taskIndex, int argIndex, String[] args) throws InvalidArgumentException {
+        StringBuilder description = new StringBuilder();
+        while (argIndex < args.length && !isUpdateTag(args[argIndex])) {
+            if (args[argIndex].equals("/desc")) {
+                throw new InvalidArgumentException("Can't change the same entry twice!");
+            }
+            description.append(args[argIndex]).append(" ");
+            argIndex++;
+        }
+        tasks.changeDescription(taskIndex, description.toString().trim());
+    }
+
+    private String getDateToUpdate(int argIndex, String[] args) throws InvalidArgumentException {
+        if (args.length <= argIndex) {
+            throw new InvalidArgumentException("Not enough arguments!");
+        }
+        String date = args[argIndex];
+        if (argIndex + 1 < args.length && !isUpdateTag(args[argIndex + 1])) {
+            date = date + " " + args[argIndex + 1];
+        }
+        checkValidDateString(date);
+        return date;
+    }
+
+    private void handleUpdateBy(int taskIndex, int argIndex, String[] args) throws InvalidArgumentException {
+        String date = getDateToUpdate(argIndex, args);
+        tasks.changeBy(taskIndex, date);
+    }
+
+    private void handleUpdateFrom(int taskIndex, int argIndex, String[] args) throws InvalidArgumentException {
+        String date = getDateToUpdate(argIndex, args);
+        tasks.changeFrom(taskIndex, date);
+    }
+
+    private void handleUpdateTo(int taskIndex, int argIndex, String[] args) throws InvalidArgumentException {
+        String date = getDateToUpdate(argIndex, args);
+        tasks.changeTo(taskIndex, date);
+    }
+
+
+
+
+    /**
      * Handles user input and executes the corresponding command.
      *
      * @param input The user input string.
@@ -333,10 +426,7 @@ public class Parser {
         String[] parts = input.split("\\s+", 2);
         String cmd = parts[0];
         String arg = parts.length > 1 ? parts[1] : "";
-        String reply = handleCommand(cmd, arg);
-
-        reply = handleCommand(cmd, arg);
-        return reply;
+        return handleCommand(cmd, arg);
     }
 
     private String handleCommand(String cmd, String arg) {
@@ -350,6 +440,7 @@ public class Parser {
             case "event" -> handleEvent(arg);
             case "delete" -> handleDelete(arg);
             case "find" -> handleFind(arg);
+            case "update" -> handleUpdate(arg);
             case "bye" -> ui.exit();
             default -> ui.showUnknownCommandError();
             };
@@ -358,8 +449,5 @@ public class Parser {
         } catch (IOException e) {
             return e.getMessage();
         }
-
-        assert !reply.isEmpty() : "Reply cannot be empty";
-        return reply;
     }
 }

@@ -34,6 +34,19 @@ public class Deadline extends Task {
         this.time = Parser.parseTimeFromDateTime(deadline);
     }
 
+    public Deadline(Deadline other) {
+        super(other);
+        this.date = other.date;
+        this.time = other.time;
+    }
+
+    @Override
+    public Deadline copy() {
+        return new Deadline(this);
+    }
+
+
+
     /**
      * Returns the deadline as a formatted string.
      *
@@ -52,6 +65,11 @@ public class Deadline extends Task {
         String done = this.isDone() ? "1" : "0";
         String dateTimeString = getDeadlineString();
         return "D | " + this.getDescription() + " | " + done + " | " + dateTimeString;
+    }
+
+    public void setDeadline(String deadline) throws InvalidArgumentException {
+        this.date = Parser.parseDateFromDateTime(deadline);
+        this.time = Parser.parseTimeFromDateTime(deadline);
     }
 
     @Override

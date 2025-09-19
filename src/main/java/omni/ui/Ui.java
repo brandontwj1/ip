@@ -59,7 +59,6 @@ public class Ui {
         if (tasks.isEmpty()) {
             return "You have no tasks... Add one!";
         }
-        System.out.print(INDENT + "Here are the tasks you've added:\n");
         StringBuilder reply = new StringBuilder("Here are the tasks you've added:\n");
         for (int i = 0; i < tasks.getSize(); i++) {
             Task t = tasks.getTask(i);
@@ -151,5 +150,10 @@ public class Ui {
             reply.append(String.format("    %d.%s\n", i + 1, t));
         }
         return reply;
+    }
+
+    public String showUpdated(Task updatedTask) {
+        return "Alrighty, I've updated this task for you:\n"
+                + "  " + updatedTask;
     }
 }

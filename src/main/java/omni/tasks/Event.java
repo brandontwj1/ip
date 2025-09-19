@@ -23,14 +23,14 @@ public class Event extends Task {
     protected LocalDate endDate;
     protected LocalTime endTime;
 
-        /**
-         * Constructs an Event task with the specified description, completion status, start and end times.
-         *
-         * @param description The task description.
-         * @param isDone Whether the task is completed.
-         * @param start The start date and time string in format "dd-MM-yyyy" or "dd-MM-yyyy HHmm".
-         * @param end The end date and time string in format "dd-MM-yyyy" or "dd-MM-yyyy HHmm".
-         */
+    /**
+     * Constructs an Event task with the specified description, completion status, start and end times.
+     *
+     * @param description The task description.
+     * @param isDone Whether the task is completed.
+     * @param start The start date and time string in format "dd-MM-yyyy" or "dd-MM-yyyy HHmm".
+     * @param end The end date and time string in format "dd-MM-yyyy" or "dd-MM-yyyy HHmm".
+     */
     public Event(String description, boolean isDone, String start, String end) throws InvalidArgumentException {
         super(description, isDone);
         this.startDate = Parser.parseDateFromDateTime(start);
@@ -39,6 +39,18 @@ public class Event extends Task {
         this.endTime = Parser.parseTimeFromDateTime(end);
     }
 
+    public Event(Event other) {
+        super(other);
+        this.startDate = other.startDate;
+        this.startTime = other.startTime;
+        this.endDate = other.endDate;
+        this.endTime = other.endTime;
+    }
+
+    @Override
+    public Event copy() {
+        return new Event(this);
+    }
     /**
      * Returns the start date and time as a formatted string.
      *
@@ -50,6 +62,11 @@ public class Event extends Task {
             dateAndTime = dateAndTime + " " + this.startTime.format(TIME_FORMATTER);
         }
         return dateAndTime;
+    }
+
+    public void setStart(String start) throws InvalidArgumentException {
+        this.startDate = Parser.parseDateFromDateTime(start);
+        this.startTime = Parser.parseTimeFromDateTime(start);
     }
 
     /**
@@ -69,6 +86,11 @@ public class Event extends Task {
     public String getEntryString() {
         String done = this.isDone() ? "1" : "0";
         return "E | " + this.getDescription() + " | " + done + " | " + getStartString() + " | " + getEndString();
+    }
+
+    public void setEnd(String end) throws InvalidArgumentException {
+        this.endDate = Parser.parseDateFromDateTime(end);
+        this.endTime = Parser.parseTimeFromDateTime(end);
     }
 
     @Override
