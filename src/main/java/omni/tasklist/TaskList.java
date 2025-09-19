@@ -2,6 +2,9 @@ package omni.tasklist;
 
 import java.util.ArrayList;
 
+import omni.exceptions.InvalidArgumentException;
+import omni.tasks.Deadline;
+import omni.tasks.Event;
 import omni.tasks.Task;
 
 /**
@@ -123,4 +126,41 @@ public class TaskList {
         }
         return matchingTasks;
     }
+
+    public void setTask(int index, Task task) {
+        tasks.set(index, task);
+    }
+
+    /**
+     * Sets the description of a task at the specified index.
+     */
+    public void changeDescription(int index, String description) {
+        Task taskToSet = tasks.get(index);
+        taskToSet.setDescription(description);
+    }
+
+    public void changeBy(int index, String by) throws InvalidArgumentException {
+        Task taskToSet = tasks.get(index);
+        if (!(taskToSet instanceof Deadline deadlineTask)) {
+            throw new InvalidArgumentException("Task is not a deadline!");
+        }
+        deadlineTask.setDeadline(by);
+    }
+
+    public void changeFrom(int index, String from) throws InvalidArgumentException {
+        Task taskToSet = tasks.get(index);
+        if (!(taskToSet instanceof Event eventTask)) {
+            throw new InvalidArgumentException("Task is not an Event!");
+        }
+        eventTask.setStart(from);
+    }
+
+    public void changeTo(int index, String to) throws InvalidArgumentException {
+        Task taskToSet = tasks.get(index);
+        if (!(taskToSet instanceof Event eventTask)) {
+            throw new InvalidArgumentException("Task is not an Event!");
+        }
+        eventTask.setEnd(to);
+    }
+
 }
