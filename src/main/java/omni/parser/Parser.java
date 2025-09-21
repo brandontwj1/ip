@@ -45,7 +45,6 @@ public class Parser {
 
     private static final int MIN_UPDATE_ARGS = 3;
     private static final int TASK_INDEX_POSITION = 0;
-    private static final int FIRST_UPDATE_ARG = 1;
 
     private Ui ui;
     private TaskList tasks;
@@ -355,7 +354,8 @@ public class Parser {
         return getIndexFromString(args[TASK_INDEX_POSITION], MESSAGE_INVALID_UPDATE_COMMAND);
     }
 
-    private String executeUpdateWithRollback(String[] args, int taskIndex) throws InvalidArgumentException, IOException {
+    private String executeUpdateWithRollback(String[] args, int taskIndex)
+            throws InvalidArgumentException, IOException {
         Task originalTask = tasks.getTask(taskIndex).copy();
 
         try {
